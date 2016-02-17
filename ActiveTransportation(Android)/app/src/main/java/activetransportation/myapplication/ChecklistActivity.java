@@ -5,18 +5,35 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 public class ChecklistActivity extends AppCompatActivity {
 
+
+    private String[] studentArray = { "Yiqing", "Yi", "Weiyun", "Kangni", "Bo", "Jincheng", "Jialun"};
+
+    private ListView studentListView;
+    private ArrayAdapter arrayAdapter;
+
+    /** Called when the activity is first created. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checklist);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        studentListView = (ListView) findViewById(R.id.student_list);
+
+        // this-The current activity context.
+        // Second param is the resource Id for list layout row item
+        // Third param is input array
+        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, studentArray);
+        studentListView.setAdapter(arrayAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -27,6 +44,7 @@ public class ChecklistActivity extends AppCompatActivity {
             }
         });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
