@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,12 +14,13 @@
     tools:showIn="@layout/activity_checklist">
 
     <ListView
-        android:id="@+id/student_list"
+        android:id="@+id/custom_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:listSelector="@drawable/list_color_selector"
         android:choiceMode="multipleChoice"
-        android:dividerHeight="1dp" >
+        android:dividerHeight="1dp"
+        android:layout_alignParentTop="true" >
     </ListView>
 
     <LinearLayout
@@ -27,7 +28,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:baselineAligned="false"
+        android:layout_alignParentBottom="true">
 
         <Button
             android:id="@+id/checklist_button"
@@ -52,4 +54,4 @@
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

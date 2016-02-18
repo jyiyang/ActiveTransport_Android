@@ -5,16 +5,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class ChecklistActivity extends AppCompatActivity {
 
 
-    private String[] studentArray = { "Yiqing", "Yi", "Weiyun", "Kangni", "Bo", "Jincheng", "Jialun"};
+    //private String[] studentArray = { "Yiqing", "Yi", "Weiyun", "Kangni", "Bo", "Jincheng", "Jialun"};
 
     private ListView studentListView;
-    private ArrayAdapter arrayAdapter;
+    //private ArrayAdapter arrayAdapter;
+    private CustomListAdapter adapter;
 
     /** Called when the activity is first created. */
     @Override
@@ -24,13 +26,26 @@ public class ChecklistActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        studentListView = (ListView) findViewById(R.id.student_list);
+        //generate list
+        ArrayList<String> studentList = new ArrayList<String>();
+        studentList.add("Yiqing");
+        studentList.add("Yi");
+        studentList.add("Weiyun");
+
+        //instantiate custom adapter
+        adapter = new CustomListAdapter(studentList, this);
+
+        //handle listview and assign adapter
+        studentListView = (ListView)findViewById(R.id.custom_list);
+        studentListView.setAdapter(adapter);
+
+        //studentListView = (ListView) findViewById(R.id.student_list);
 
         // this-The current activity context.
         // Second param is the resource Id for list layout row item
         // Third param is input array
-        arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, studentArray);
-        studentListView.setAdapter(arrayAdapter);
+        //arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, studentArray);
+        //studentListView.setAdapter(arrayAdapter);
 
         /*
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
