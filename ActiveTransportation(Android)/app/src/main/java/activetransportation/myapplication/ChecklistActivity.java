@@ -6,6 +6,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.content.Intent;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -17,6 +19,22 @@ public class ChecklistActivity extends AppCompatActivity {
     private ListView studentListView;
     //private ArrayAdapter arrayAdapter;
     private CustomListAdapter adapter;
+
+    /* Switch activities when click on tabs */
+    public void switchChecklist(View view) {
+        Intent intent = new Intent(this, ChecklistActivity.class);
+        startActivity(intent);
+    }
+
+    public void switchTimeAndLoc(View view) {
+        Intent intent = new Intent(this, TimeAndLocation.class);
+        startActivity(intent);
+    }
+
+    public void switchNotify(View view) {
+        Intent intent = new Intent(this, Notify.class);
+        startActivity(intent);
+    }
 
     /** Called when the activity is first created. */
     @Override
