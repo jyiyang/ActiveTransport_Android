@@ -9,19 +9,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:orientation="vertical"
-    tools:context="activetransportation.myapplication.ChecklistActivity"
-    tools:showIn="@layout/activity_checklist">
-
-    <ListView
-        android:id="@+id/custom_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:listSelector="@drawable/list_color_selector"
-        android:choiceMode="multipleChoice"
-        android:dividerHeight="1dp"
-        android:layout_alignParentTop="true" >
-    </ListView>
+    tools:context="activetransportation.myapplication.TimeAndLocation"
+    tools:showIn="@layout/activity_time_and_location">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -36,15 +25,15 @@
             android:layout_width="wrap_content"
             android:layout_height="70sp"
             android:layout_weight="1"
-            android:text="Checklist" />
+            android:text="Checklist"
+            android:onClick="switchChecklist" />
 
         <Button
             android:id="@+id/timeloc_button"
             android:layout_width="wrap_content"
             android:layout_height="70sp"
             android:layout_weight="1"
-            android:text="Time and Location"
-            android:onClick="switchTimeAndLoc" />
+            android:text="Time and Location"/>
 
         <Button
             android:id="@+id/notification_button"
@@ -52,8 +41,7 @@
             android:layout_height="70sp"
             android:layout_weight="1"
             android:text="Notify"
-            android:onClick="switchTimeAndLoc" />
+            android:onClick="switchNotify" />
 
     </LinearLayout>
-
 </RelativeLayout>
