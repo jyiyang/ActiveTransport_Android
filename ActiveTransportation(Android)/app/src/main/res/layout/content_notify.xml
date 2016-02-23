@@ -19,27 +19,28 @@
         android:baselineAligned="false"
         android:layout_alignParentBottom="true">
 
-    <Button
-        android:id="@+id/checklist_button"
-        android:layout_width="wrap_content"
-        android:layout_height="70sp"
-        android:layout_weight="1"
-        android:text="Checklist"
-        android:onClick="switchChecklist" />
+        <Button
+            android:id="@+id/checklist_button"
+            android:layout_width="wrap_content"
+            android:layout_height="70sp"
+            android:layout_weight="1"
+            android:text="Checklist"
+            android:onClick="switchChecklist" />
 
-    <Button
-        android:id="@+id/timeloc_button"
-        android:layout_width="wrap_content"
-        android:layout_height="70sp"
-        android:layout_weight="1"
-        android:text="Time and Location"/>
+        <Button
+            android:id="@+id/timeloc_button"
+            android:layout_width="wrap_content"
+            android:layout_height="70sp"
+            android:layout_weight="1"
+            android:text="Time and Location"
+            android:onClick="switchTimeAndLoc"/>
 
 
-    <Button
-        android:id="@+id/notification_button"
-        android:layout_width="wrap_content"
-        android:layout_height="70sp"
-        android:layout_weight="1"
-        android:text="Notify"/>
+        <Button
+            android:id="@+id/notification_button"
+            android:layout_width="wrap_content"
+            android:layout_height="70sp"
+            android:layout_weight="1"
+            android:text="Notify"/>
     </LinearLayout>
 </RelativeLayout>
