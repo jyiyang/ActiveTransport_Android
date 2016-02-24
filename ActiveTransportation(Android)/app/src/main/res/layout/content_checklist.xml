@@ -52,7 +52,7 @@
             android:layout_height="70sp"
             android:layout_weight="1"
             android:text="Notify"
-            android:onClick="switchTimeAndLoc" />
+            android:onClick="switchNotify" />
 
     </LinearLayout>
 
