@@ -1,8 +1,5 @@
 package activetransportation.myapplication;
 
-/**
- * Created by Weiyun on 2/18/16.
- */
 public class CheckListItem {
 
     private String studentName;

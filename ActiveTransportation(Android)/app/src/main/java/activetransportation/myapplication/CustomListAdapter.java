@@ -13,9 +13,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by Weiyun on 2/18/16.
- */
+
 public class CustomListAdapter extends BaseAdapter implements ListAdapter {
     private ArrayList<String> list = new ArrayList<String>();
     private Context context;

@@ -1,20 +1,21 @@
 package activetransportation.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
-import android.content.Intent;
 import android.view.View;
+import android.widget.ListView;
+
+import com.firebase.client.Firebase;
 
 import java.util.ArrayList;
 
 public class ChecklistActivity extends AppCompatActivity {
 
 
-    //private String[] studentArray = { "Yiqing", "Yi", "Weiyun", "Kangni", "Bo", "Jincheng", "Jialun"};
 
     private ListView studentListView;
     //private ArrayAdapter arrayAdapter;
@@ -27,12 +28,12 @@ public class ChecklistActivity extends AppCompatActivity {
     }
 
     public void switchTimeAndLoc(View view) {
-        Intent intent = new Intent(this, TimeAndLocation.class);
+        Intent intent = new Intent(this, TimeAndLocationActivity.class);
         startActivity(intent);
     }
 
     public void switchNotify(View view) {
-        Intent intent = new Intent(this, Notify.class);
+        Intent intent = new Intent(this, NotifyActivity.class);
         startActivity(intent);
     }
 
@@ -40,6 +41,7 @@ public class ChecklistActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_checklist);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
