@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.firebase.client.Firebase;
@@ -58,6 +59,14 @@ public class ChecklistActivity extends AppCompatActivity {
         //handle listview and assign adapter
         studentListView = (ListView)findViewById(R.id.custom_list);
         studentListView.setAdapter(adapter);
+
+        studentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object pickedItem = studentListView.getItemAtPosition(position);
+                view.setSelected(true);
+            }
+        });
 
         //studentListView = (ListView) findViewById(R.id.student_list);
 

@@ -17,8 +17,8 @@
         android:id="@+id/custom_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:listSelector="@drawable/list_color_selector"
         android:choiceMode="multipleChoice"
+        android:listSelector="@drawable/list_color_selector"
         android:dividerHeight="1dp"
         android:layout_alignParentTop="true" >
     </ListView>

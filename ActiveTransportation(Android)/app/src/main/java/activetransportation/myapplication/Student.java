@@ -17,22 +17,18 @@ public class Student {
         this.isArrived = false;
     }
 
-    public int getID() {
-        return ID;
-    }
-    public int getName() {
-        return name;
-    }
+    public int getID() { return ID; }
+    public String getName() { return name; }
     public int getParentID() {
         return parentID;
     }
-    public int getIsArrived() {
+    public boolean getIsArrived() {
         return isArrived;
     }
-    public int getLeaderNotes() {
+    public String getLeaderNotes() {
         return leaderNotes;
     }
-    public int getParentNotes() {
+    public String getParentNotes() {
         return parentNotes;
     }
 
