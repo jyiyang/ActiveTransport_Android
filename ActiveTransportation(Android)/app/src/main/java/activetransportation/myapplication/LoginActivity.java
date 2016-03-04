@@ -327,7 +327,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return pieces[1].equals(mPassword);
                 }
             }
-            Firebase loginInfo = new Firebase("https://active-transportation.firebaseio.com/");
+            Firebase loginInfo = new Firebase("https://active-transportation.firebaseio.com/users/");
             Map<String, String> User0 = new HashMap<>();
             User0.put("UserEmail", mEmail);
             User0.put("Password", mPassword);
