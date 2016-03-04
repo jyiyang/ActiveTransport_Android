@@ -2,15 +2,12 @@ package activetransportation.myapplication;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-public class contactInfoActivity extends AppCompatActivity {
+public class ContactInfoActivity extends AppCompatActivity {
     public void switchChecklist(View view) {
         Intent intent = new Intent(this, ChecklistActivity.class);
         startActivity(intent);
@@ -39,7 +36,7 @@ public class contactInfoActivity extends AppCompatActivity {
         parentView.setText("George Washington");
 
         TextView phoneView = (TextView) findViewById(R.id.phone_num);
-        phoneView.setText("(111)4242-424");
+        phoneView.setText("(909)424-424");
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {

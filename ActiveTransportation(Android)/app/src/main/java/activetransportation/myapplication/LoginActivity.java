@@ -331,6 +331,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
                 }
 
+
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
                     // there was an error

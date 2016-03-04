@@ -9,7 +9,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="activetransportation.myapplication.contactInfoActivity"
+    tools:context=".ContactInfoActivity"
     tools:showIn="@layout/activity_contact_info"
     android:id="@+id/content">
 
@@ -29,7 +29,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:textColor="@color/text_color_default"
-        android:textSize="20dp" />
+        android:textSize="16dp" />
 
     <TextView
         android:id="@+id/phone_num"
@@ -39,7 +39,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:textColor="@color/text_color_default"
-        android:textSize="20dp" />
+        android:textSize="16dp" />
 
     <Button
         android:id="@+id/checklist_button"

@@ -70,7 +70,7 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
         contactBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), contactInfoActivity.class);
+                Intent intent = new Intent(v.getContext(), ContactInfoActivity.class);
                 String name = list.get(position);
                 intent.putExtra(CONTACT_INFO, name);
                 v.getContext().startActivity(intent);

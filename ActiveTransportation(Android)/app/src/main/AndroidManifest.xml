@@ -47,7 +47,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".contactInfoActivity"
+            android:name=".ContactInfoActivity"
             android:label="Contact Info"
             android:parentActivityName=".ChecklistActivity"
             android:theme="@style/AppTheme.NoActionBar">
