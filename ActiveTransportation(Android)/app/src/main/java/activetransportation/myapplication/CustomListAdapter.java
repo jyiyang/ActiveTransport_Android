@@ -1,6 +1,7 @@
 package activetransportation.myapplication;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 
 
 public class CustomListAdapter extends BaseAdapter implements ListAdapter {
+    public final static String CONTACT_INFO = "ActiveTransport.CONTACT_INFO";
     private ArrayList<String> list = new ArrayList<String>();
     private Context context;
 
@@ -68,8 +70,10 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
         contactBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                //do something
-                notifyDataSetChanged();
+                Intent intent = new Intent(v.getContext(), contactInfoActivity.class);
+                String name = list.get(position);
+                intent.putExtra(CONTACT_INFO, name);
+                v.getContext().startActivity(intent);
             }
         });
 

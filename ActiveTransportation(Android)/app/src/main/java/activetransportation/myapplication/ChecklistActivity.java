@@ -9,14 +9,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.firebase.client.Firebase;
 
 import java.util.ArrayList;
 
 public class ChecklistActivity extends AppCompatActivity {
-
-
 
     private ListView studentListView;
     //private ArrayAdapter arrayAdapter;
