@@ -28,10 +28,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -320,21 +321,48 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-            Firebase loginInfo = new Firebase("https://active-transportation.firebaseio.com/users/");
-            Map<String, String> User0 = new HashMap<>();
-            User0.put("UserEmail", mEmail);
-            User0.put("Password", mPassword);
-            Map<String, Map<String, String>> Users = new HashMap<>();
-            Users.put("User0", User0);
-            loginInfo.setValue(Users);
 
+            Firebase ref = new Firebase("https://active-transportation.firebaseio.com");
+
+            ref.authWithPassword(mEmail, mPassword, new Firebase.AuthResultHandler() {
+
+                @Override
+                public void onAuthenticated(AuthData authData) {
+                    System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
+                }
+
+                @Override
+                public void onAuthenticationError(FirebaseError firebaseError) {
+                    // there was an error
+                }
+            });
+
+            //for (String credential : DUMMY_CREDENTIALS) {
+            //    String[] pieces = credential.split(":");
+            //    if (pieces[0].equals(mEmail)) {
+            //        // Account exists, return true if the password matches.
+            //        return pieces[1].equals(mPassword);
+            //    }
+            //}
+
+            //Map<String, String> User0 = new HashMap<>();
+            //User0.put("UserEmail", mEmail);
+            //User0.put("Password", mPassword);
+            //Map<String, Map<String, String>> Users = new HashMap<>();
+            //Users.put("User0", User0);
+            //loginInfo.setValue(Users);
+
+            ref.createUser(mEmail, mPassword, new Firebase.ValueResultHandler<Map<String, Object>>() {
+                @Override
+                public void onSuccess(Map<String, Object> result) {
+                    System.out.println("Successfully created user account with uid: " + result.get("uid"));
+                }
+
+                @Override
+                public void onError(FirebaseError firebaseError) {
+                    // there was an error
+                }
+            });
             // TODO: Multiple users and password encryption
             return true;
         }
