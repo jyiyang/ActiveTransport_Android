@@ -28,8 +28,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.firebase.client.Firebase;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -65,6 +69,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_login);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -322,8 +327,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return pieces[1].equals(mPassword);
                 }
             }
+            Firebase loginInfo = new Firebase("https://active-transportation.firebaseio.com/");
+            Map<String, String> User0 = new HashMap<>();
+            User0.put("UserEmail", mEmail);
+            User0.put("Password", mPassword);
+            Map<String, Map<String, String>> Users = new HashMap<>();
+            Users.put("User0", User0);
+            loginInfo.setValue(Users);
 
-            // TODO: register the new account here.
+            // TODO: Multiple users and password encryption
             return true;
         }
 
