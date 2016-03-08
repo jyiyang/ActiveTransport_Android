@@ -103,11 +103,9 @@ public class ChecklistActivity extends AppCompatActivity {
         });
 
         studentList = stuListHolder.getValue();
-        studentList = stuListHolder.getValue();
 
         //instantiate custom adapter
         System.out.println(stuListHolder.getValue().size());
-        System.out.println("bad");
         adapter = new CustomListAdapter(studentList, this);
 
         //handle listview and assign adapter
