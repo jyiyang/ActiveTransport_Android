@@ -322,7 +322,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
 
 
-            Firebase ref = new Firebase("https://active-transportation.firebaseio.com");
+            Firebase ref = new Firebase(FIREBASE_URL);
 
             ref.authWithPassword(mEmail, mPassword, new Firebase.AuthResultHandler() {
 

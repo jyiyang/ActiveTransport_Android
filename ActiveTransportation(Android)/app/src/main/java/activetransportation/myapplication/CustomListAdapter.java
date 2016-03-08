@@ -17,10 +17,10 @@ import java.util.ArrayList;
 
 public class CustomListAdapter extends BaseAdapter implements ListAdapter {
     public final static String CONTACT_INFO = "ActiveTransport.CONTACT_INFO";
-    private ArrayList<CheckListItem> list = new ArrayList<CheckListItem>();
+    private ArrayList<Student> list = new ArrayList<Student>();
     private Context context;
 
-    public CustomListAdapter(ArrayList<CheckListItem> list, Context context) {
+    public CustomListAdapter(ArrayList<Student> list, Context context) {
         this.list = list;
         this.context = context;
     }
@@ -50,11 +50,11 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
             view = inflater.inflate(R.layout.list_row_layout, null);
         }
 
-        CheckListItem item = list.get(position);
+        Student student = list.get(position);
 
         //Handle TextView and display string from your list
         TextView studentName = (TextView)view.findViewById(R.id.student_name);
-        studentName.setText(item.getStudentName());
+        studentName.setText(student.getName());
 
         //Handle checkboxes and add setOnCheckedChangeListeners
         CheckBox checkBox = (CheckBox)view.findViewById(R.id.checkbox);
@@ -73,8 +73,8 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ContactInfoActivity.class);
-                CheckListItem item = list.get(position);
-                String name = item.getStudentName();  // position is index in the list
+                Student student = list.get(position);
+                String name = student.getName();  // position is index in the list
                 intent.putExtra(CONTACT_INFO, name);
                 v.getContext().startActivity(intent);
             }

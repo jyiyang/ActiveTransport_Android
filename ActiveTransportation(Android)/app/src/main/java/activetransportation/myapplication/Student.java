@@ -10,11 +10,8 @@ public class Student {
     private String leaderNotes;
     private String parentNotes;
 
-    public Student(String ID, String name, String parentID, String staffID) {
-        this.ID = ID;
+    public Student(String name) {
         this.name = name;
-        this.parentID = parentID;
-        this.staffID = staffID;
         this.isArrived = false;
     }
 
@@ -26,6 +23,7 @@ public class Student {
     public String getLeaderNotes() { return leaderNotes; }
     public String getParentNotes() { return parentNotes; }
 
+    public void setID(String ID) { this.ID = ID; }
     public void setIsArrived(boolean isArrived) { this.isArrived = isArrived; }
     public void setLeaderNotes(String leaderNotes) { this.leaderNotes = leaderNotes; }
     public void setParentNotes(String parentNotes) { this.parentNotes = parentNotes; }

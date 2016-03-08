@@ -13,12 +13,16 @@ import android.widget.ListView;
 import com.firebase.client.Firebase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChecklistActivity extends AppCompatActivity {
 
     private ListView studentListView;
     //private ArrayAdapter arrayAdapter;
     private CustomListAdapter adapter;
+
+    private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
 
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
@@ -36,20 +40,45 @@ public class ChecklistActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void putStudent(Student student, Firebase studentRef) {
+        Map<String, Object> stuMap = new HashMap<String, Object>();
+        stuMap.put("name", student.getName());
+        stuMap.put("isArrived", student.getIsArrived());
+        Firebase stuRef = studentRef.push();
+        stuRef.setValue(stuMap);
+        student.setID(stuRef.getKey());
+    }
+
     /** Called when the activity is first created. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_checklist);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Firebase ref = new Firebase(FIREBASE_URL);
+        Firebase studentRef = ref.child("students");
+
+        Student student1 = new Student("Yiqing Cai");
+        Student student2 = new Student("Yi Yang");
+        Student student3 = new Student("Weiyun Ma");
+
+        // the following code is commented since we only put data into Firebase once
+        /*
+        putStudent(student1, studentRef);
+        putStudent(student2, studentRef);
+        putStudent(student3, studentRef);
+        */
+
         //generate list
-        ArrayList<CheckListItem> studentList = new ArrayList<CheckListItem>();
-        studentList.add(new CheckListItem("Yiqing Cai", "Parent 1", "(909)123-456"));
-        studentList.add(new CheckListItem("Yi Yang", "Parent 2", "(909)123-456"));
-        studentList.add(new CheckListItem("Weiyun Ma", "Parent 3", "(909)123-456"));
+        ArrayList<Student> studentList = new ArrayList<Student>();
+        studentList.add(student1);
+        studentList.add(student2);
+        studentList.add(student3);
 
         //instantiate custom adapter
         adapter = new CustomListAdapter(studentList, this);
