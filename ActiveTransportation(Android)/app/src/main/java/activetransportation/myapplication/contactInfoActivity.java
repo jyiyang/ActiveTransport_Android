@@ -30,10 +30,10 @@ public class ContactInfoActivity extends AppCompatActivity {
 //        layout.addView(textView);
 
         TextView nameView = (TextView) findViewById(R.id.student_name);
-        nameView.setText(name);
+        nameView.setText(name + ":");
 
         TextView parentView = (TextView) findViewById(R.id.parent_name);
-        parentView.setText("George Washington");
+        parentView.setText("Foo Bar");
 
         TextView phoneView = (TextView) findViewById(R.id.phone_num);
         phoneView.setText("(909)424-424");

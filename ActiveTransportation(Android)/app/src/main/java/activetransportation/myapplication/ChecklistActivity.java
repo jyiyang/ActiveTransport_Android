@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.firebase.client.Firebase;
 
@@ -47,10 +46,10 @@ public class ChecklistActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         //generate list
-        ArrayList<String> studentList = new ArrayList<String>();
-        studentList.add("Yiqing");
-        studentList.add("Yi");
-        studentList.add("Weiyun");
+        ArrayList<CheckListItem> studentList = new ArrayList<CheckListItem>();
+        studentList.add(new CheckListItem("Yiqing Cai", "Parent 1", "(909)123-456"));
+        studentList.add(new CheckListItem("Yi Yang", "Parent 2", "(909)123-456"));
+        studentList.add(new CheckListItem("Weiyun Ma", "Parent 3", "(909)123-456"));
 
         //instantiate custom adapter
         adapter = new CustomListAdapter(studentList, this);

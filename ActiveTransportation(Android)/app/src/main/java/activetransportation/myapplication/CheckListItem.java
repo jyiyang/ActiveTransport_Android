@@ -7,6 +7,13 @@ public class CheckListItem {
     private String parentContactInfo;
     private Boolean isArrived;
 
+    public CheckListItem(String studentName, String parentName, String parentContactInfo) {
+        this.studentName = studentName;
+        this.parentName = parentName;
+        this.parentContactInfo = parentContactInfo;
+        this.isArrived = false;
+    }
+
     public void setStudentName(String studentName) {
         this.studentName = studentName;
     }
