@@ -10,7 +10,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +26,10 @@ public class ChecklistActivity extends AppCompatActivity {
     private CustomListAdapter adapter;
 
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+
+    //generate list
+    private ArrayList<Student> studentList = new ArrayList<Student>();
+    private final Holder<ArrayList<Student>> stuListHolder = new Holder<ArrayList<Student>>(new ArrayList<Student>());
 
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
@@ -53,7 +60,6 @@ public class ChecklistActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_checklist);
@@ -61,26 +67,47 @@ public class ChecklistActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Firebase ref = new Firebase(FIREBASE_URL);
-        Firebase studentRef = ref.child("students");
+        Firebase studentsRef = ref.child("students");
+        // the following code is commented since we only put data into Firebase once
 
+        /*
         Student student1 = new Student("Yiqing Cai");
         Student student2 = new Student("Yi Yang");
         Student student3 = new Student("Weiyun Ma");
 
-        // the following code is commented since we only put data into Firebase once
-        /*
-        putStudent(student1, studentRef);
-        putStudent(student2, studentRef);
-        putStudent(student3, studentRef);
+        putStudent(student1, studentsRef);
+        putStudent(student2, studentsRef);
+        putStudent(student3, studentsRef);
         */
 
-        //generate list
-        ArrayList<Student> studentList = new ArrayList<Student>();
-        studentList.add(student1);
-        studentList.add(student2);
-        studentList.add(student3);
+        // Attach an listener to read the data at our posts reference
+        studentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                ArrayList<Student> tempStuList = new ArrayList<Student>();
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    Map<String, Object> stuMap = (Map<String, Object>) postSnapshot.getValue();
+                    Student student = new Student((String) stuMap.get("name"));
+                    student.setID(postSnapshot.getKey());
+                    student.setIsArrived((Boolean) stuMap.get("isArrived"));
+                    tempStuList.add(student);
+                }
+                stuListHolder.setValue(tempStuList);
+                System.out.println(stuListHolder.getValue().size());
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getMessage());
+            }
+        });
+
+        studentList = stuListHolder.getValue();
+        studentList = stuListHolder.getValue();
 
         //instantiate custom adapter
+        System.out.println(stuListHolder.getValue().size());
+        System.out.println("bad");
         adapter = new CustomListAdapter(studentList, this);
 
         //handle listview and assign adapter
@@ -136,4 +163,5 @@ public class ChecklistActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }
