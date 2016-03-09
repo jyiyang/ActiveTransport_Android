@@ -7,7 +7,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.firebase.client.DataSnapshot;
@@ -28,8 +27,7 @@ public class ChecklistActivity extends AppCompatActivity {
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
 
     //generate list
-    private ArrayList<Student> studentList = new ArrayList<Student>();
-    private final Holder<ArrayList<Student>> stuListHolder = new Holder<ArrayList<Student>>(new ArrayList<Student>());
+    private ArrayList<Student> studentList;
 
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
@@ -70,15 +68,15 @@ public class ChecklistActivity extends AppCompatActivity {
         Firebase studentsRef = ref.child("students");
         // the following code is commented since we only put data into Firebase once
 
-        /*
-        Student student1 = new Student("Yiqing Cai");
-        Student student2 = new Student("Yi Yang");
-        Student student3 = new Student("Weiyun Ma");
 
-        putStudent(student1, studentsRef);
-        putStudent(student2, studentsRef);
-        putStudent(student3, studentsRef);
-        */
+        //Student student1 = new Student("Yiqing Cai");
+        //Student student2 = new Student("Yi Yang");
+        //Student student3 = new Student("Weiyun Ma");
+
+        //putStudent(student1, studentsRef);
+        //putStudent(student2, studentsRef);
+        //putStudent(student3, studentsRef);
+
 
         // Attach an listener to read the data at our posts reference
         studentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -92,8 +90,15 @@ public class ChecklistActivity extends AppCompatActivity {
                     student.setIsArrived((Boolean) stuMap.get("isArrived"));
                     tempStuList.add(student);
                 }
-                stuListHolder.setValue(tempStuList);
-                System.out.println(stuListHolder.getValue().size());
+                //stuListHolder.setValue(tempStuList);
+                //System.out.println(stuListHolder.getValue().size());
+                studentList = tempStuList;
+                adapter = new CustomListAdapter(studentList, ChecklistActivity.this);
+
+                //handle listview and assign adapter
+                studentListView = (ListView)findViewById(R.id.custom_list);
+                studentListView.setAdapter(adapter);
+
             }
 
             @Override
@@ -102,23 +107,19 @@ public class ChecklistActivity extends AppCompatActivity {
             }
         });
 
-        studentList = stuListHolder.getValue();
+        //studentList = stuListHolder.getValue();
 
         //instantiate custom adapter
-        System.out.println(stuListHolder.getValue().size());
-        adapter = new CustomListAdapter(studentList, this);
+        //System.out.println(stuListHolder.getValue().size());
 
-        //handle listview and assign adapter
-        studentListView = (ListView)findViewById(R.id.custom_list);
-        studentListView.setAdapter(adapter);
 
-        studentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Object pickedItem = studentListView.getItemAtPosition(position);
-                view.setSelected(true);
-            }
-        });
+        //studentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        //    @Override
+        //    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //        Object pickedItem = studentListView.getItemAtPosition(position);
+        //        view.setSelected(true);
+        //    }
+        //});
 
         //studentListView = (ListView) findViewById(R.id.student_list);
 
@@ -138,7 +139,6 @@ public class ChecklistActivity extends AppCompatActivity {
             }
         });*/
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
