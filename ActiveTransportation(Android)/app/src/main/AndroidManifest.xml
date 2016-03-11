@@ -18,11 +18,13 @@
         <activity
             android:name=".ChecklistActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"></activity>
         <activity
             android:name=".TimeAndLocationActivity"
             android:label="@string/title_activity_time_and_location"
             android:parentActivityName=".ChecklistActivity"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -32,7 +34,8 @@
             android:name=".NotifyActivity"
             android:label="@string/title_activity_notify"
             android:parentActivityName=".ChecklistActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="activetransportation.myapplication.ChecklistActivity" />
