@@ -15,6 +15,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,6 +59,9 @@ public class ChecklistActivity extends AppCompatActivity {
         Map<String, Object> routeMap = new HashMap<String, Object>();
         routeMap.put("name", route.getRouteName());
         routeMap.put("Students", route.getStudents());
+        routeMap.put("Time", route.getTimeString());
+        routeMap.put("Location", route.getLocation());
+        routeMap.put("Staff", route.getStaffID());
         Firebase rouRef = routeRef.push();
         rouRef.setValue(routeMap);
         route.setID(rouRef.getKey());
@@ -83,16 +87,20 @@ public class ChecklistActivity extends AppCompatActivity {
         //Student student1 = new Student("Yiqing Cai");
         //Student student2 = new Student("Yi Yang");
         //Student student3 = new Student("Weiyun Ma");
-        Student student4 = new Student("Route Tester");
+//        Student student4 = new Student("Route Tester");
 
         //putStudent(student1, studentsRef);
         //putStudent(student2, studentsRef);
         //putStudent(student3, studentsRef);
-        putStudent(student4, studentsRef);
-
-        Route route1 = new Route("TestRoute");
-        route1.addStudent(student4.getID());
-        putRoute(route1, routeRef);
+//        putStudent(student4, studentsRef);
+//
+//        Route route1 = new Route("TestRoute");
+//        route1.addStudent(student4.getID());
+//        route1.setLocation("340 E Foothill Blvd");
+//        route1.setStaff("1181d6eb-66d4-4ddd-a4c6-feec1431f67b");
+//        GregorianCalendar time = new GregorianCalendar();
+//        route1.setTime(time);
+//        putRoute(route1, routeRef);
 
 
         // Attach an listener to read the data at our posts reference

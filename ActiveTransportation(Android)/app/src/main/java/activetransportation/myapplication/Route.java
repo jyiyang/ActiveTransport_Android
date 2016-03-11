@@ -1,5 +1,6 @@
 package activetransportation.myapplication;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
@@ -20,7 +21,11 @@ public class Route {
     public String getRouteName() { return routeName; }
     public String getStaffID() { return staffID; }
     public String getLocation() { return location; }
-    public GregorianCalendar getTime() { return time; }
+    public GregorianCalendar getTimeRaw() { return time; }
+    public String getTimeString() {
+        String str = DateFormat.getDateTimeInstance().format(time.getTime());
+        return str;
+    }
     public ArrayList<String> getStudents() { return students; }
 
 
