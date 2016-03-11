@@ -54,6 +54,15 @@ public class ChecklistActivity extends AppCompatActivity {
         student.setID(stuRef.getKey());
     }
 
+    public void putRoute(Route route, Firebase routeRef) {
+        Map<String, Object> routeMap = new HashMap<String, Object>();
+        routeMap.put("name", route.getRouteName());
+        routeMap.put("Students", route.getStudents());
+        Firebase rouRef = routeRef.push();
+        rouRef.setValue(routeMap);
+        route.setID(rouRef.getKey());
+    }
+
     /** Called when the activity is first created. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,16 +75,24 @@ public class ChecklistActivity extends AppCompatActivity {
 
         Firebase ref = new Firebase(FIREBASE_URL);
         Firebase studentsRef = ref.child("students");
+        Firebase routeRef = ref.child("routes");
+
         // the following code is commented since we only put data into Firebase once
 
 
         //Student student1 = new Student("Yiqing Cai");
         //Student student2 = new Student("Yi Yang");
         //Student student3 = new Student("Weiyun Ma");
+        Student student4 = new Student("Route Tester");
 
         //putStudent(student1, studentsRef);
         //putStudent(student2, studentsRef);
         //putStudent(student3, studentsRef);
+        putStudent(student4, studentsRef);
+
+        Route route1 = new Route("TestRoute");
+        route1.addStudent(student4.getID());
+        putRoute(route1, routeRef);
 
 
         // Attach an listener to read the data at our posts reference

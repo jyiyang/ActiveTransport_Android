@@ -8,7 +8,6 @@ public class User {
     private String email;
     private boolean isStaff;
     private String contactInfo;
-    private String routeID;
     private ArrayList<String> studentIDs;
 
     public User(String id, String email, String name, String contactInfo, boolean isStaff) {
@@ -24,12 +23,10 @@ public class User {
     public String getEmail() { return email; }
     public String getContactInfo() { return contactInfo; }
     public boolean getIsStaff() { return isStaff; }
-    public String getRouteID() { return routeID; }
     public ArrayList<String> getStudents() { return studentIDs; }
 
 
     public void setUserID(String userID) { this.userID = userID; }
-    public void setRouteID(String routeID) { this.routeID = routeID; }
     public void setContactInfo(String contactInfo) { this.contactInfo = contactInfo; }
     public void setChildren(ArrayList<String> studentIDs) {this.studentIDs = studentIDs; }
 
