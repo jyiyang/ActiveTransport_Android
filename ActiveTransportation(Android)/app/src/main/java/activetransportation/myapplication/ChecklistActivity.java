@@ -45,11 +45,11 @@ public class ChecklistActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void putStudent(Student student, Firebase studentRef) {
+    public void putStudent(Student student, Firebase studentsRef) {
         Map<String, Object> stuMap = new HashMap<String, Object>();
         stuMap.put("name", student.getName());
         stuMap.put("isArrived", student.getIsArrived());
-        Firebase stuRef = studentRef.push();
+        Firebase stuRef = studentsRef.push();
         stuRef.setValue(stuMap);
         student.setID(stuRef.getKey());
     }

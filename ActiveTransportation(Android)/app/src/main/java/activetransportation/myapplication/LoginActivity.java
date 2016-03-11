@@ -33,6 +33,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,13 +50,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int REQUEST_READ_CONTACTS = 0;
 
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
+
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -66,6 +61,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    public void putUser(User user, Firebase usersRef) {
+        Map<String, Object> userMap = new HashMap<String, Object>();
+        userMap.put("name", user.getName());
+        userMap.put("isStaff", user.getIsStaff());
+        userMap.put("email", user.getEmail());
+        userMap.put("contactInfo", user.getContactInfo());
+        Firebase stfRef = usersRef.child(user.getUserID());
+        stfRef.setValue(userMap);
+        user.setUserID(stfRef.getKey());
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -328,6 +334,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 @Override
                 public void onAuthenticated(AuthData authData) {
+                    // the following code is commented since we only put data into Firebase once
+                    //authData.getUid();
+                    //Firebase ref = new Firebase(FIREBASE_URL);
+                    //Firebase usersRef = ref.child("users");
+                    //String email = (String) authData.getProviderData().get("email");
+                    //String id = authData.getUid();
+                    //Parent parent = new Parent(id, email, "Yiqing's Parent", "(909)123-4567", false);
+                    //putUser(parent, usersRef);
+
                     System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
                 }
 
