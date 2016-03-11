@@ -14,7 +14,7 @@ public class Route {
 
     public Route(String name) {
         this.routeName = name;
-        this.students = new ArrayList<String>(10);
+        this.students = new ArrayList<String>();
     }
 
     public String getRouteID() { return routeID; }
