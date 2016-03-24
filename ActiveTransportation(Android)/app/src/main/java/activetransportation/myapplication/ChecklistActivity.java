@@ -12,6 +12,7 @@ import android.widget.ListView;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
@@ -28,6 +29,9 @@ public class ChecklistActivity extends AppCompatActivity {
 
     //generate list
     private ArrayList<Student> studentList;
+    private ArrayList<String> stuIDList;
+    private Boolean isStaff_;
+    private String routeID_;
 
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
@@ -64,40 +68,98 @@ public class ChecklistActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Intent intent = getIntent();
+        String userEmail = intent.getStringExtra(LoginActivity.CHECKLIST);
+        //System.out.println(userEmail);
+        Firebase ref = new Firebase(FIREBASE_URL);
+        //Firebase userRef = ref.child("users").child(userID);
+        Query userRef = ref.child("users").orderByChild("email").equalTo(userEmail);
+        //System.out.println(userRef);
+
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+
+                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                    String key = postSnapshot.getKey();
+                    System.out.println(key);
+                    Map<String, Object> userMap = (Map<String, Object>) postSnapshot.getValue();
+                    isStaff_ = (Boolean) userMap.get("isStaff");
+                    routeID_ = (String) userMap.get("routeID");
+                    //if (key == "isStaff") {
+                    //    isStaff_ = (Boolean) postSnapshot.getValue();
+                    //} else if (key == "routeID") {
+                    //    routeID_ = (String) postSnapshot.getValue();
+                    //}
+                }
+                createList(isStaff_, routeID_);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("The read failed: " + firebaseError.getMessage());
+            }
+        });
+    }
+
+    public void createList(Boolean isStaff, String routeID) {
         Firebase ref = new Firebase(FIREBASE_URL);
         Firebase studentsRef = ref.child("students");
-        // the following code is commented since we only put data into Firebase once
 
+        // the following code is commented since we only put data into Firebase once
 
         //Student student1 = new Student("Yiqing Cai");
         //Student student2 = new Student("Yi Yang");
         //Student student3 = new Student("Weiyun Ma");
-
         //putStudent(student1, studentsRef);
         //putStudent(student2, studentsRef);
         //putStudent(student3, studentsRef);
 
+        if (isStaff) {
 
-        // Attach an listener to read the data at our posts reference
+            ref.child("routes").child(routeID).child("Students").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    stuIDList = new ArrayList<String>();
+                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                        stuIDList.add((String) postSnapshot.getKey());
+                    }
+                    createListHelper();
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    System.out.println("The read failed: " + firebaseError.getMessage());
+                }
+            });
+        }
+    }
+
+    public void createListHelper() {
+        Firebase ref = new Firebase(FIREBASE_URL);
+
+        Firebase studentsRef = ref.child("students");
         studentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                ArrayList<Student> tempStuList = new ArrayList<Student>();
+                studentList = new ArrayList<Student>();
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    Map<String, Object> stuMap = (Map<String, Object>) postSnapshot.getValue();
-                    Student student = new Student((String) stuMap.get("name"));
-                    student.setID(postSnapshot.getKey());
-                    student.setIsArrived((Boolean) stuMap.get("isArrived"));
-                    student.setParentID((String) stuMap.get("parentID"));
-                    tempStuList.add(student);
+                    if (stuIDList.contains(postSnapshot.getKey())) {
+                        Map<String, Object> stuMap = (Map<String, Object>) postSnapshot.getValue();
+                        Student student = new Student((String) stuMap.get("name"));
+                        student.setID(postSnapshot.getKey());
+                        student.setIsArrived((Boolean) stuMap.get("isArrived"));
+                        student.setParentID((String) stuMap.get("parentID"));
+                        studentList.add(student);
+                    }
                 }
                 //stuListHolder.setValue(tempStuList);
                 //System.out.println(stuListHolder.getValue().size());
-                studentList = tempStuList;
+                //studentList = tempStuList;
                 adapter = new CustomListAdapter(studentList, ChecklistActivity.this);
 
                 //handle listview and assign adapter
-                studentListView = (ListView)findViewById(R.id.custom_list);
+                studentListView = (ListView) findViewById(R.id.custom_list);
                 studentListView.setAdapter(adapter);
 
             }

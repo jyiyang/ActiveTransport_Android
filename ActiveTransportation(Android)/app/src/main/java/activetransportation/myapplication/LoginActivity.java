@@ -48,8 +48,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
-
+    public final static String CHECKLIST = "ActiveTransport.CHECKLIST";
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+    //private String userID;
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -344,6 +345,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     //putUser(parent, usersRef);
 
                     System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
+                    //userID = authData.getUid();
                 }
 
 
@@ -391,6 +393,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 finish();
                 Intent myIntent = new Intent(LoginActivity.this, ChecklistActivity.class);
+                myIntent.putExtra(CHECKLIST, mEmail);
+                //System.out.println(mEmail);
                 LoginActivity.this.startActivity(myIntent);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
