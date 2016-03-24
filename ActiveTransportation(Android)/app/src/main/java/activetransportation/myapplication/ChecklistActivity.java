@@ -88,6 +88,7 @@ public class ChecklistActivity extends AppCompatActivity {
                     Student student = new Student((String) stuMap.get("name"));
                     student.setID(postSnapshot.getKey());
                     student.setIsArrived((Boolean) stuMap.get("isArrived"));
+                    student.setParentID((String) stuMap.get("parentID"));
                     tempStuList.add(student);
                 }
                 //stuListHolder.setValue(tempStuList);

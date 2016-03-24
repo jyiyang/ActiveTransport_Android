@@ -25,6 +25,7 @@ public class Student {
 
     public void setID(String ID) { this.ID = ID; }
     public void setIsArrived(boolean isArrived) { this.isArrived = isArrived; }
+    public void setParentID(String parentID) { this.parentID = parentID; }
     public void setLeaderNotes(String leaderNotes) { this.leaderNotes = leaderNotes; }
     public void setParentNotes(String parentNotes) { this.parentNotes = parentNotes; }
 }

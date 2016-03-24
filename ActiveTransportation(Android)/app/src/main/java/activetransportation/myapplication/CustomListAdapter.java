@@ -110,7 +110,10 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ContactInfoActivity.class);
                 String name = student.getName();  // position is index in the list
-                intent.putExtra(CONTACT_INFO, name);
+                String parentID = student.getParentID();
+
+                String[] info = new String[] {name, parentID};
+                intent.putExtra(CONTACT_INFO, info);
                 v.getContext().startActivity(intent);
             }
         });
