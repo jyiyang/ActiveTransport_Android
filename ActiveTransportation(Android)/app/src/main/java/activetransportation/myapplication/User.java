@@ -25,9 +25,9 @@ public class User {
     public boolean getIsStaff() { return isStaff; }
     public ArrayList<String> getStudents() { return studentIDs; }
 
-
     public void setUserID(String userID) { this.userID = userID; }
     public void setContactInfo(String contactInfo) { this.contactInfo = contactInfo; }
     public void setChildren(ArrayList<String> studentIDs) {this.studentIDs = studentIDs; }
+    public void setStaff(boolean isStaff) {this.isStaff = isStaff; }
 
 }
