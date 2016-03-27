@@ -26,12 +26,14 @@ public class ChecklistActivity extends AppCompatActivity {
     private CustomListAdapter adapter;
 
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+    public final static String ROUTEID = "ActiveTransport.ROUTEID";
 
     //generate list
     private ArrayList<Student> studentList;
     private ArrayList<String> stuIDList;
     private Boolean isStaff_;
     private String routeID_;
+    private String userEmail;
 
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
@@ -41,6 +43,7 @@ public class ChecklistActivity extends AppCompatActivity {
 
     public void switchTimeAndLoc(View view) {
         Intent intent = new Intent(this, TimeAndLocationActivity.class);
+        intent.putExtra(ROUTEID, routeID_);
         startActivity(intent);
     }
 
@@ -69,7 +72,7 @@ public class ChecklistActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
-        String userEmail = intent.getStringExtra(LoginActivity.CHECKLIST);
+        userEmail = intent.getStringExtra(LoginActivity.CHECKLIST);
         //System.out.println(userEmail);
         Firebase ref = new Firebase(FIREBASE_URL);
         //Firebase userRef = ref.child("users").child(userID);

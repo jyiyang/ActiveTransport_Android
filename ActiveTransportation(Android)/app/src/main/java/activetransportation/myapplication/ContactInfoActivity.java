@@ -17,7 +17,6 @@ import com.firebase.client.ValueEventListener;
 public class ContactInfoActivity extends AppCompatActivity {
 
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
-    private TextView textView;
     private TextView nameView;
     private TextView parentView;
     private TextView phoneView;
@@ -68,9 +67,9 @@ public class ContactInfoActivity extends AppCompatActivity {
                 System.out.println("parent name: " + parentName);
                 System.out.println("contactInfo: " + parentContactInfo);
 
-                textView = new TextView(ContactInfoActivity.this);
-                textView.setTextSize(20);
-                textView.setText(name);
+                //textView = new TextView(ContactInfoActivity.this);
+                //textView.setTextSize(20);
+                //textView.setText(name);
 
                 nameView = (TextView) findViewById(R.id.student_name);
                 nameView.setText(name + ":");
