@@ -336,13 +336,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void onAuthenticated(AuthData authData) {
                     // the following code is commented since we only put data into Firebase once
-                    //authData.getUid();
-                    //Firebase ref = new Firebase(FIREBASE_URL);
-                    //Firebase usersRef = ref.child("users");
-                    //String email = (String) authData.getProviderData().get("email");
-                    //String id = authData.getUid();
-                    //Parent parent = new Parent(id, email, "Yiqing's Parent", "(909)123-4567", false);
-                    //putUser(parent, usersRef);
+//                    authData.getUid();
+//                    Firebase ref = new Firebase(FIREBASE_URL);
+//                    Firebase usersRef = ref.child("users");
+//                    String email = (String) authData.getProviderData().get("email");
+//                    String id = authData.getUid();
+//                    Parent parent = new Parent(id, email, "Yiqing's Parent", "(909)123-4567", false);
+//                    parent.setStaff(true);
+//                    putUser(parent, usersRef);
 
                     System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
                     //userID = authData.getUid();
