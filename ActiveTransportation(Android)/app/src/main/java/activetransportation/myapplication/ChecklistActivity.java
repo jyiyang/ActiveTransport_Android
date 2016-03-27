@@ -26,6 +26,7 @@ public class ChecklistActivity extends AppCompatActivity {
     private CustomListAdapter adapter;
 
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+    public final static String ROUTEID = "ActiveTransport.ROUTEID";
 
     //generate list
     private ArrayList<Student> studentList;
@@ -33,6 +34,8 @@ public class ChecklistActivity extends AppCompatActivity {
     private Boolean isStaff_;
     private String routeID_;
     private String userID_;
+    private String userEmail;
+
 
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
@@ -42,6 +45,7 @@ public class ChecklistActivity extends AppCompatActivity {
 
     public void switchTimeAndLoc(View view) {
         Intent intent = new Intent(this, TimeAndLocationActivity.class);
+        intent.putExtra(ROUTEID, routeID_);
         startActivity(intent);
     }
 
@@ -70,7 +74,9 @@ public class ChecklistActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
-        String userEmail = intent.getStringExtra(LoginActivity.CHECKLIST);
+
+        userEmail = intent.getStringExtra(LoginActivity.CHECKLIST);
+
         //System.out.println(userEmail);
         Firebase ref = new Firebase(FIREBASE_URL);
         //Firebase userRef = ref.child("users").child(userID);
@@ -87,6 +93,7 @@ public class ChecklistActivity extends AppCompatActivity {
                     Map<String, Object> userMap = (Map<String, Object>) postSnapshot.getValue();
                     isStaff_ = (Boolean) userMap.get("isStaff");
                     routeID_ = (String) userMap.get("routeID");
+
                     userID_ = key;
                     //if (key == "isStaff") {
                     //    isStaff_ = (Boolean) postSnapshot.getValue();
@@ -104,7 +111,9 @@ public class ChecklistActivity extends AppCompatActivity {
         });
     }
 
+
     public void createList(Boolean isStaff, String routeID, final String userID) {
+
         Firebase ref = new Firebase(FIREBASE_URL);
         Firebase studentsRef = ref.child("students");
 
@@ -118,7 +127,6 @@ public class ChecklistActivity extends AppCompatActivity {
         //putStudent(student3, studentsRef);
 
         if (isStaff) {
-
             ref.child("routes").child(routeID).child("Students").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
@@ -134,48 +142,45 @@ public class ChecklistActivity extends AppCompatActivity {
                     System.out.println("The read failed: " + firebaseError.getMessage());
                 }
             });
-        }
-            else {
-                ref.child("routes").child(routeID).child("Students").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot snapshot) {
-                        stuIDList = new ArrayList<String>();
-                        for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                            stuIDList.add((String) postSnapshot.getKey());
-                            final ArrayList<String> childrenList = new ArrayList<String>();
-                            Firebase ref = new Firebase(FIREBASE_URL);
+        } else {
+            ref.child("routes").child(routeID).child("Students").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    stuIDList = new ArrayList<String>();
+                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                        stuIDList.add((String) postSnapshot.getKey());
+                        final ArrayList<String> childrenList = new ArrayList<String>();
+                        Firebase ref = new Firebase(FIREBASE_URL);
 
-                            ref.child("students").addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                                        if (postSnapshot.child("parentID").getValue().equals(userID)) {
-                                            childrenList.add((String) postSnapshot.getKey());
-                                        }
+                        ref.child("students").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                                    if (postSnapshot.child("parentID").getValue().equals(userID)) {
+                                        childrenList.add((String) postSnapshot.getKey());
                                     }
                                 }
-                                @Override
-                                public void onCancelled(FirebaseError firebaseError) {
-                                    System.out.println("The read failed: " + firebaseError.getMessage());
-                                }
-                            });
-                            stuIDList = childrenList;
-                        }
-                        createListHelper();
+                            }
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
+                                System.out.println("The read failed: " + firebaseError.getMessage());
+                            }
+                        });
+                        stuIDList = childrenList;
                     }
+                    createListHelper();
+                }
 
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
                     System.out.println("The read failed: " + firebaseError.getMessage());
                 }
             });
-
         }
     }
 
     public void createListHelper() {
         Firebase ref = new Firebase(FIREBASE_URL);
-
         Firebase studentsRef = ref.child("students");
         studentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -208,40 +213,7 @@ public class ChecklistActivity extends AppCompatActivity {
             }
         });
 
-        //studentList = stuListHolder.getValue();
-
-        //instantiate custom adapter
-        //System.out.println(stuListHolder.getValue().size());
-
-
-        //studentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-        //    @Override
-        //    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //        Object pickedItem = studentListView.getItemAtPosition(position);
-        //        view.setSelected(true);
-        //    }
-        //});
-
-        //studentListView = (ListView) findViewById(R.id.student_list);
-
-        // this-The current activity context.
-        // Second param is the resource Id for list layout row item
-        // Third param is input array
-        //arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_multiple_choice, studentArray);
-        //studentListView.setAdapter(arrayAdapter);
-
-        /*
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
