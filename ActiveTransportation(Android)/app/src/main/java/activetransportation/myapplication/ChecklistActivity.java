@@ -26,6 +26,7 @@ public class ChecklistActivity extends AppCompatActivity {
     private CustomListAdapter adapter;
 
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+    public final static String STUIDS = "ActiveTransport.STUIDS";
     public final static String ROUTEID = "ActiveTransport.ROUTEID";
 
     //generate list
@@ -33,6 +34,7 @@ public class ChecklistActivity extends AppCompatActivity {
     private ArrayList<String> stuIDList;
     private Boolean isStaff_;
     private String routeID_;
+    private ArrayList<String> routeIDs;
     private String userID_;
     private String userEmail;
 
@@ -45,7 +47,7 @@ public class ChecklistActivity extends AppCompatActivity {
 
     public void switchTimeAndLoc(View view) {
         Intent intent = new Intent(this, TimeAndLocationActivity.class);
-        intent.putExtra(ROUTEID, routeID_);
+        intent.putExtra(STUIDS, stuIDList);
         startActivity(intent);
     }
 
@@ -95,11 +97,6 @@ public class ChecklistActivity extends AppCompatActivity {
                     routeID_ = (String) userMap.get("routeID");
 
                     userID_ = key;
-                    //if (key == "isStaff") {
-                    //    isStaff_ = (Boolean) postSnapshot.getValue();
-                    //} else if (key == "routeID") {
-                    //    routeID_ = (String) postSnapshot.getValue();
-                    //}
                 }
                 createList(isStaff_, routeID_, userID_);
             }
@@ -115,7 +112,6 @@ public class ChecklistActivity extends AppCompatActivity {
     public void createList(Boolean isStaff, String routeID, final String userID) {
 
         Firebase ref = new Firebase(FIREBASE_URL);
-        Firebase studentsRef = ref.child("students");
 
         // the following code is commented since we only put data into Firebase once
 
@@ -143,34 +139,17 @@ public class ChecklistActivity extends AppCompatActivity {
                 }
             });
         } else {
-            ref.child("routes").child(routeID).child("Students").addListenerForSingleValueEvent(new ValueEventListener() {
+            ref.child("students").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
-                public void onDataChange(DataSnapshot snapshot) {
+                public void onDataChange(DataSnapshot dataSnapshot) {
                     stuIDList = new ArrayList<String>();
-                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                        stuIDList.add((String) postSnapshot.getKey());
-                        final ArrayList<String> childrenList = new ArrayList<String>();
-                        Firebase ref = new Firebase(FIREBASE_URL);
-
-                        ref.child("students").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                                    if (postSnapshot.child("parentID").getValue().equals(userID)) {
-                                        childrenList.add((String) postSnapshot.getKey());
-                                    }
-                                }
-                            }
-                            @Override
-                            public void onCancelled(FirebaseError firebaseError) {
-                                System.out.println("The read failed: " + firebaseError.getMessage());
-                            }
-                        });
-                        stuIDList = childrenList;
+                    for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                        if (postSnapshot.child("parentID").getValue().equals(userID)) {
+                            stuIDList.add((String) postSnapshot.getKey());
+                        }
                     }
                     createListHelper();
                 }
-
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
                     System.out.println("The read failed: " + firebaseError.getMessage());

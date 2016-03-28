@@ -13,9 +13,19 @@
     tools:showIn="@layout/activity_time_and_location">
 
     <TextView
+        android:id="@+id/route_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:textColor="@color/text_color_default"
+        android:textSize="16dp" />
+
+    <TextView
         android:id="@+id/meeting_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/route_name"
+        android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:textColor="@color/text_color_default"
         android:textSize="16dp" />

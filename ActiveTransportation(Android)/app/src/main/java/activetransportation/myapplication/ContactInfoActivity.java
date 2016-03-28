@@ -29,13 +29,6 @@ public class ContactInfoActivity extends AppCompatActivity {
         finish();
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        System.out.println("call override method");
-//        Intent intent = new Intent(this, ChecklistActivity.class);
-//        startActivity(intent);
-//    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,10 +59,6 @@ public class ContactInfoActivity extends AppCompatActivity {
                 }
                 System.out.println("parent name: " + parentName);
                 System.out.println("contactInfo: " + parentContactInfo);
-
-                //textView = new TextView(ContactInfoActivity.this);
-                //textView.setTextSize(20);
-                //textView.setText(name);
 
                 nameView = (TextView) findViewById(R.id.student_name);
                 nameView.setText(name + ":");
@@ -105,31 +94,6 @@ public class ContactInfoActivity extends AppCompatActivity {
             }
         });
 
-        //TextView textView = new TextView(this);
-        //textView.setTextSize(20);
-        //textView.setText(name);
-
-        //RelativeLayout layout = (RelativeLayout) findViewById(R.id.content);
-        //layout.addView(textView);
-
-        //TextView nameView = (TextView) findViewById(R.id.student_name);
-        //nameView.setText(name + ":");
-
-        //TextView parentView = (TextView) findViewById(R.id.parent_name);
-        //parentView.setText(parentName);
-
-        //TextView phoneView = (TextView) findViewById(R.id.phone_num);
-        //phoneView.setText(parentContactInfo);
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 }

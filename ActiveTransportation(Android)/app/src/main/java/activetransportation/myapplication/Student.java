@@ -5,6 +5,7 @@ public class Student {
     private String ID;
     private String name;
     private String parentID;
+    private String routeID;
     private String staffID;
     private boolean isArrived;
     private String leaderNotes;
@@ -28,4 +29,5 @@ public class Student {
     public void setParentID(String parentID) { this.parentID = parentID; }
     public void setLeaderNotes(String leaderNotes) { this.leaderNotes = leaderNotes; }
     public void setParentNotes(String parentNotes) { this.parentNotes = parentNotes; }
+    public void setRouteID(String routeID) { this.routeID = routeID; }
 }

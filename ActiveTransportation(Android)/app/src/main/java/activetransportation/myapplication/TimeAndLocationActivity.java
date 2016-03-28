@@ -13,6 +13,8 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class TimeAndLocationActivity extends AppCompatActivity {
@@ -20,8 +22,11 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
     private String location;
     private String time;
+    private String routeID_;
+    private String routeName;
     private TextView locView;
     private TextView timeView;
+    private TextView routeView;
 
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
@@ -48,44 +53,75 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
-        String routeID = intent.getStringExtra(ChecklistActivity.ROUTEID);
+        ArrayList<String> stuIDs = intent.getStringArrayListExtra(ChecklistActivity.STUIDS);
+        final Map<String, ArrayList<String>> stuRouteMap = new HashMap<String, ArrayList<String>>();
 
-        Firebase ref = new Firebase(FIREBASE_URL);
+        final Firebase ref = new Firebase(FIREBASE_URL);
         //Firebase userRef = ref.child("users").child(userID);
-        Query routeRef = ref.child("routes").orderByKey().equalTo(routeID);
-        //System.out.println(userRef);
+        for (String stuID : stuIDs) {
+            final Query stuRef = ref.child("students").orderByKey().equalTo(stuID);
+            //System.out.println(userRef);
 
-        routeRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
+            stuRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
 
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    String key = postSnapshot.getKey();
-                    System.out.println(key);
-                    Map<String, Object> userMap = (Map<String, Object>) postSnapshot.getValue();
-                    location = (String) userMap.get("Location");
-                    time = (String) userMap.get("Time");
-                    //if (key == "isStaff") {
-                    //    isStaff_ = (Boolean) postSnapshot.getValue();
-                    //} else if (key == "routeID") {
-                    //    routeID_ = (String) postSnapshot.getValue();
-                    //}
+                    ArrayList<String> temp;
+                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                        String key = postSnapshot.getKey();
+                        System.out.println(key);
+                        Map<String, Object> userMap = (Map<String, Object>) postSnapshot.getValue();
+                        String routeID = (String) userMap.get("routeID");
+                        String name = (String) userMap.get("name");
+                        if (stuRouteMap.containsKey(routeID)) {
+                            temp = stuRouteMap.get(routeID);
+                        } else {
+                            temp = new ArrayList<String>();
+                        }
+                        temp.add(name);
+                        stuRouteMap.put(routeID, temp);
+                    }
+
+                    if (stuRouteMap.size() == 1) {
+                        ref.child("routes").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
+
+                                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                                    String key = postSnapshot.getKey();
+                                    System.out.println(key);
+                                    Map<String, Object> userMap = (Map<String, Object>) postSnapshot.getValue();
+                                    routeID_ = (String) userMap.get("routeID");
+                                    location = (String) userMap.get("Location");
+                                    time = (String) userMap.get("Time");
+
+                                }
+
+                                routeView = (TextView) findViewById(R.id.route_name);
+                                routeView.setText(routeName);
+
+                                locView = (TextView) findViewById(R.id.meeting_location);
+                                locView.setText(location);
+
+                                timeView = (TextView) findViewById(R.id.meeting_time);
+                                timeView.setText(time);
+                            }
+
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
+                                System.out.println("The read failed: " + firebaseError.getMessage());
+                            }
+                        });
+                    }
                 }
 
-                locView = (TextView) findViewById(R.id.meeting_location);
-                locView.setText(location);
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    System.out.println("The read failed: " + firebaseError.getMessage());
+                }
+            });
 
-                timeView = (TextView) findViewById(R.id.meeting_time);
-                timeView.setText(time);
-
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
-            }
-        });
-
+        }
 
     }
 
