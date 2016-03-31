@@ -6,10 +6,8 @@ public class Student {
     private String name;
     private String parentID;
     private String routeID;
-    private String staffID;
     private boolean isArrived;
-    private String leaderNotes;
-    private String parentNotes;
+
 
     public Student(String name) {
         this.name = name;
@@ -19,15 +17,12 @@ public class Student {
     public String getID() { return ID; }
     public String getName() { return name; }
     public String getParentID() { return parentID; }
-    public String getStaffID() { return staffID; }
+    public String getRouteID() { return routeID; }
     public boolean getIsArrived() { return isArrived; }
-    public String getLeaderNotes() { return leaderNotes; }
-    public String getParentNotes() { return parentNotes; }
+
 
     public void setID(String ID) { this.ID = ID; }
     public void setIsArrived(boolean isArrived) { this.isArrived = isArrived; }
     public void setParentID(String parentID) { this.parentID = parentID; }
-    public void setLeaderNotes(String leaderNotes) { this.leaderNotes = leaderNotes; }
-    public void setParentNotes(String parentNotes) { this.parentNotes = parentNotes; }
     public void setRouteID(String routeID) { this.routeID = routeID; }
 }

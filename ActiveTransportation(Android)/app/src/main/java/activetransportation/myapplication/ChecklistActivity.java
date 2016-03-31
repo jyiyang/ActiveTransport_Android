@@ -34,7 +34,8 @@ public class ChecklistActivity extends AppCompatActivity {
     private ArrayList<String> stuIDList;
     private Boolean isStaff_;
     private String routeID_;
-    private ArrayList<String> routeIDs;
+    private Object childrenIDs_;
+    private Object routeIDs;
     private String userID_;
     private String userEmail;
 
@@ -94,11 +95,14 @@ public class ChecklistActivity extends AppCompatActivity {
                     System.out.println(key);
                     Map<String, Object> userMap = (Map<String, Object>) postSnapshot.getValue();
                     isStaff_ = (Boolean) userMap.get("isStaff");
-                    routeID_ = (String) userMap.get("routeID");
-
+                    if (isStaff_) {
+                        routeID_ = (String) userMap.get("routeID");
+                    } else {
+                        childrenIDs_= new ArrayList<String>(((Map<String, Object>) userMap.get("childrenIDs")).keySet());
+                    }
                     userID_ = key;
                 }
-                createList(isStaff_, routeID_, userID_);
+                createList(isStaff_, routeID_, childrenIDs_, userID_);
             }
 
             @Override
@@ -109,7 +113,7 @@ public class ChecklistActivity extends AppCompatActivity {
     }
 
 
-    public void createList(Boolean isStaff, String routeID, final String userID) {
+    public void createList(Boolean isStaff, Object maybeRouteID, Object maybeChildrenIDs, final String userID) {
 
         Firebase ref = new Firebase(FIREBASE_URL);
 
@@ -123,6 +127,7 @@ public class ChecklistActivity extends AppCompatActivity {
         //putStudent(student3, studentsRef);
 
         if (isStaff) {
+            String routeID = (String) maybeRouteID;
             ref.child("routes").child(routeID).child("Students").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
@@ -139,6 +144,7 @@ public class ChecklistActivity extends AppCompatActivity {
                 }
             });
         } else {
+            ArrayList<String> childrenIDs = (ArrayList<String>) maybeChildrenIDs;
             ref.child("students").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -165,6 +171,7 @@ public class ChecklistActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 studentList = new ArrayList<Student>();
+                studentList.add(new Student(isStaff_.toString()));
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     if (stuIDList.contains(postSnapshot.getKey())) {
                         Map<String, Object> stuMap = (Map<String, Object>) postSnapshot.getValue();
@@ -172,12 +179,14 @@ public class ChecklistActivity extends AppCompatActivity {
                         student.setID(postSnapshot.getKey());
                         student.setIsArrived((Boolean) stuMap.get("isArrived"));
                         student.setParentID((String) stuMap.get("parentID"));
+                        student.setRouteID((String) stuMap.get("routeID"));
                         studentList.add(student);
                     }
                 }
                 //stuListHolder.setValue(tempStuList);
                 //System.out.println(stuListHolder.getValue().size());
                 //studentList = tempStuList;
+
                 adapter = new CustomListAdapter(studentList, ChecklistActivity.this);
 
                 //handle listview and assign adapter

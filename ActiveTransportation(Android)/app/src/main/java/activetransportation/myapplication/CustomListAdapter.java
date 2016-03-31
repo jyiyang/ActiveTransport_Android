@@ -25,9 +25,12 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
     public final static String CONTACT_INFO = "ActiveTransport.CONTACT_INFO";
     private ArrayList<Student> list = new ArrayList<Student>();
     private Context context;
+    private Boolean isStaff;
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
 
     public CustomListAdapter(ArrayList<Student> list, Context context) {
+        this.isStaff = Boolean.parseBoolean(list.get(0).getName());
+        list.remove(0);
         this.list = list;
         this.context = context;
     }
@@ -66,6 +69,7 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
         //Handle checkboxes and add setOnCheckedChangeListeners
         final CheckBox checkBox = (CheckBox)view.findViewById(R.id.checkbox);
         checkBox.setChecked(false);
+        if (!isStaff) { checkBox.setEnabled(false); }
 
         Firebase ref = new Firebase(FIREBASE_URL);
         Firebase studentsRef = ref.child("students");
@@ -104,6 +108,11 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
 
         //Handle buttons and add onClickListeners
         Button contactBtn = (Button)view.findViewById(R.id.contact_btn);
+        if (isStaff) {
+            contactBtn.setText("Contact Parent");
+        } else {
+            contactBtn.setText("Contact Staff");
+        }
 
         contactBtn.setOnClickListener(new View.OnClickListener(){
             @Override
