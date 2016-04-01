@@ -26,6 +26,7 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
     private ArrayList<Student> list = new ArrayList<Student>();
     private Context context;
     private Boolean isStaff;
+    private String staffID;
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
 
     public CustomListAdapter(ArrayList<Student> list, Context context) {
@@ -120,13 +121,20 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
                 Intent intent = new Intent(v.getContext(), ContactInfoActivity.class);
                 String name = student.getName();  // position is index in the list
                 String parentID = student.getParentID();
+                String routeID = student.getRouteID();
+                Firebase ref = new Firebase(FIREBASE_URL);
 
-                String[] info = new String[] {name, parentID};
-                intent.putExtra(CONTACT_INFO, info);
+                if (isStaff) {
+                    intent.putExtra(CONTACT_INFO, "1" + parentID);
+                } else {
+                    intent.putExtra(CONTACT_INFO, "0" + routeID);
+                }
                 v.getContext().startActivity(intent);
+
             }
         });
 
         return view;
     }
 }
+

@@ -13,20 +13,11 @@
     tools:showIn="@layout/activity_contact_info"
     android:id="@+id/content">
 
-    <TextView
-        android:id="@+id/student_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:textColor="@color/text_color_default"
-        android:textSize="16dp" />
 
     <TextView
         android:id="@+id/parent_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/student_name"
-        android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:textColor="@color/text_color_default"
         android:textSize="16dp" />

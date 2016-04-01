@@ -113,7 +113,7 @@ public class ChecklistActivity extends AppCompatActivity {
     }
 
 
-    public void createList(Boolean isStaff, Object maybeRouteID, Object maybeChildrenIDs, final String userID) {
+    private void createList(Boolean isStaff, Object maybeRouteID, Object maybeChildrenIDs, final String userID) {
 
         Firebase ref = new Firebase(FIREBASE_URL);
 
@@ -164,7 +164,7 @@ public class ChecklistActivity extends AppCompatActivity {
         }
     }
 
-    public void createListHelper() {
+    private void createListHelper() {
         Firebase ref = new Firebase(FIREBASE_URL);
         Firebase studentsRef = ref.child("students");
         studentsRef.addListenerForSingleValueEvent(new ValueEventListener() {

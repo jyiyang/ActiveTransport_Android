@@ -17,13 +17,15 @@ import com.firebase.client.ValueEventListener;
 public class ContactInfoActivity extends AppCompatActivity {
 
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
-    private TextView nameView;
-    private TextView parentView;
+    //private TextView nameView;
+    private TextView userView;
     private TextView phoneView;
 
-    private String name;
-    private String parentName;
-    private String parentContactInfo;
+    //private String name;
+    private String userName;
+    private String userContactInfo;
+    private String staffID;
+    private Boolean isStaff;
 
     public void switchChecklist(View view) {
         finish();
@@ -35,39 +37,77 @@ public class ContactInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_contact_info);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Firebase ref = new Firebase(FIREBASE_URL);
 
         Intent intent = getIntent();
-        String[] info = intent.getStringArrayExtra(CustomListAdapter.CONTACT_INFO);
+        String someID = intent.getStringExtra(CustomListAdapter.CONTACT_INFO);
+        if (someID.charAt(0) == '1') {
+            isStaff = true;
+        } else {
+            isStaff = false;
+        }
+        someID = someID.substring(1);
 
-        name = info[0];
-        String parentID = info[1];
+        if (isStaff) {
+            createView(someID);
 
+        } else {
+
+            Firebase routeRef = ref.child("routes").child(someID);
+
+            routeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                        String key = postSnapshot.getKey();
+                        System.out.println(key);
+                        if (key == "Staff") {
+                            staffID = (String) postSnapshot.getValue();
+                            break;
+                        }
+                    }
+                    createView(staffID);
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+                    System.out.println("The read failed: " + firebaseError.getMessage());
+                }
+            });
+        }
+    }
+
+    private void createView(String userID) {
         Firebase ref = new Firebase(FIREBASE_URL);
-        Firebase parentRef = ref.child("users").child(parentID);
+        Firebase userRef = ref.child("users").child(userID);
         // Attach an listener to read the data at our posts reference
-        parentRef.addValueEventListener(new ValueEventListener() {
+        userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
 
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     String key = postSnapshot.getKey();
                     if (key == "name") {
-                        parentName = (String) postSnapshot.getValue();
+                        userName = (String) postSnapshot.getValue();
                     } else if (key == "contactInfo") {
-                        parentContactInfo = (String) postSnapshot.getValue();
+                        userContactInfo = (String) postSnapshot.getValue();
                     }
                 }
-                System.out.println("parent name: " + parentName);
-                System.out.println("contactInfo: " + parentContactInfo);
+                if (isStaff) {
+                    System.out.println("parent name: " + userName);
+                } else {
+                    System.out.println("staff name: " + userName);
+                }
+                System.out.println("contactInfo: " + userContactInfo);
 
-                nameView = (TextView) findViewById(R.id.student_name);
-                nameView.setText(name + ":");
+                //nameView = (TextView) findViewById(R.id.student_name);
+                //nameView.setText(name + ":");
 
-                parentView = (TextView) findViewById(R.id.parent_name);
-                parentView.setText(parentName);
+                userView = (TextView) findViewById(R.id.parent_name);
+                userView.setText(userName);
 
                 phoneView = (TextView) findViewById(R.id.phone_num);
-                phoneView.setText(parentContactInfo);
+                phoneView.setText(userContactInfo);
 
 
                 phoneView.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +115,7 @@ public class ContactInfoActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Intent phoneIntent = new Intent(Intent.ACTION_CALL);
-                        phoneIntent.setData(Uri.parse("tel:" + parentContactInfo));
+                        phoneIntent.setData(Uri.parse("tel:" + userContactInfo));
                         try {
                             startActivity(phoneIntent);
                         }
