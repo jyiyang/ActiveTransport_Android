@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         final Firebase ref = new Firebase(FIREBASE_URL);
         //Firebase userRef = ref.child("users").child(userID);
         for (String stuID : stuIDs) {
-            final Firebase stuRef = ref.child("students").child(stuID);
+            final Query stuRef = ref.child("students").orderByKey().equalTo(stuID);
             //System.out.println(userRef);
 
             stuRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -80,7 +81,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                         temp.add(name);
                         stuRouteMap.put(routeID, temp);
                     }
-                    
+
 
                     if (stuRouteMap.size() == 1) {
                         ref.child("routes").addListenerForSingleValueEvent(new ValueEventListener() {
