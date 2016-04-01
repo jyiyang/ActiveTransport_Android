@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         final Firebase ref = new Firebase(FIREBASE_URL);
         //Firebase userRef = ref.child("users").child(userID);
         for (String stuID : stuIDs) {
-            final Query stuRef = ref.child("students").orderByKey().equalTo(stuID);
+            final Firebase stuRef = ref.child("students").child(stuID);
             //System.out.println(userRef);
 
             stuRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -70,9 +69,9 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                         String key = postSnapshot.getKey();
                         System.out.println(key);
-                        Map<String, Object> userMap = (Map<String, Object>) postSnapshot.getValue();
-                        String routeID = (String) userMap.get("routeID");
-                        String name = (String) userMap.get("name");
+                        Map<String, Object> stuMap = (Map<String, Object>) postSnapshot.getValue();
+                        String routeID = (String) stuMap.get("routeID");
+                        String name = (String) stuMap.get("name");
                         if (stuRouteMap.containsKey(routeID)) {
                             temp = stuRouteMap.get(routeID);
                         } else {
@@ -81,6 +80,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                         temp.add(name);
                         stuRouteMap.put(routeID, temp);
                     }
+                    
 
                     if (stuRouteMap.size() == 1) {
                         ref.child("routes").addListenerForSingleValueEvent(new ValueEventListener() {
