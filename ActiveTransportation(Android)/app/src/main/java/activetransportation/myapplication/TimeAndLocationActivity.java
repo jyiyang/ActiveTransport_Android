@@ -23,6 +23,7 @@ import com.firebase.client.ValueEventListener;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -183,6 +184,10 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         mLocationDisplay = (TextView) findViewById(R.id.meeting_location_staff);
         mRouteName = (TextView) findViewById(R.id.route_name_staff);
 
+        mYear = calendar.get(Calendar.YEAR);
+        mMonth = calendar.get(Calendar.MONTH);
+        mDay = calendar.get(Calendar.DAY_OF_MONTH);
+
         ref.child("routes").child(routeID_).child("Location").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -195,8 +200,6 @@ public class TimeAndLocationActivity extends AppCompatActivity {
             public void onCancelled(FirebaseError error) {
                 mMeetLocation.setText("Fail to read old location");
             }
-
-
         });
 
         mSetLocation.setOnClickListener(new View.OnClickListener() {
@@ -264,7 +267,6 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                         calendar.set(mYear, mMonth, mDay, mhour, mminute);
                         String str = DateFormat.getDateTimeInstance().format(calendar.getTime());
                         mTimeDisplay.setText(str);
-                        pushToDataBase(routeID_, meetLocation, calendar);
                     }
                 };
 
