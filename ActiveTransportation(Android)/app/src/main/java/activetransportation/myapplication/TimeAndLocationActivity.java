@@ -28,6 +28,19 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     private TextView timeView;
     private TextView routeView;
 
+    private class RouteInfo {
+        public String location;
+        public String meetingTime;
+        public String routeID;
+        public ArrayList<String> studentNameList;
+
+        public RouteInfo(String location, String meetingTime, ArrayList<String> studentNameList) {
+            this.location = location;
+            this.meetingTime = meetingTime;
+            this.studentNameList = studentNameList;
+        }
+    }
+
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
         Intent intent = new Intent(this, ChecklistActivity.class);
@@ -118,7 +131,32 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                             }
                         });
                     }
+
                     else {
+                        final Map<String, RouteInfo> routeMap = new HashMap<String, RouteInfo>();
+                        for (final String routeID : stuRouteMap.keySet()) {
+                            ref.child("routes").child(routeID).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                    Map<String, Object> rMap = (Map<String, Object>) snapshot.getValue();
+                                    String rLocation = rMap.get("Location").toString();
+                                    String rTime = rMap.get("Time").toString();
+
+//                                    System.out.print("Location is ");
+//                                    System.out.println(rLocation);
+//                                    System.out.print("Time is ");
+//                                    System.out.println(rTime);
+                                    RouteInfo rInfo = new RouteInfo(rLocation, rTime, stuRouteMap.get(routeID));
+                                    routeMap.put(routeID, rInfo);
+                                }
+
+                                @Override
+                                public void onCancelled(FirebaseError firebaseError) {
+                                    System.out.println("The read failed: " + firebaseError.getMessage());
+                                }
+                            });
+                        }
+
 
                     }
                 }
