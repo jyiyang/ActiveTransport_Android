@@ -7,9 +7,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -19,8 +21,8 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,9 +45,16 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     private int mDay;
     private TextView mTimeDisplay;
     private Button mPickTime;
+    private EditText mMeetLocation;
+    private TextView mLocationDisplay;
+    private Button mSetLocation;
+    private TextView mRouteName;
+    private String meetLocation;
+
 
     private int mhour;
     private int mminute;
+    private final GregorianCalendar calendar  = new GregorianCalendar();
 
     static final int TIME_DIALOG_ID = 1;
 
@@ -163,15 +172,58 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     }
 
     private void setStaff(Intent intent) {
-        String routeID = intent.getStringExtra(ChecklistActivity.ROUTEID);
-        final Firebase ref = new Firebase(FIREBASE_URL);
+        routeID_ = intent.getStringExtra(ChecklistActivity.ROUTEID);
+        Firebase ref = new Firebase(FIREBASE_URL);
 
         mPickDate =(Button)findViewById(R.id.set_date);
         mTimeDisplay = (TextView) findViewById(R.id.meeting_time_staff);
         mPickTime = (Button) findViewById(R.id.set_time);
+        mMeetLocation = (EditText) findViewById(R.id.input_location);
+        mSetLocation = (Button) findViewById(R.id.set_location);
+        mLocationDisplay = (TextView) findViewById(R.id.meeting_location_staff);
+        mRouteName = (TextView) findViewById(R.id.route_name_staff);
+
+        ref.child("routes").child(routeID_).child("Location").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                String DefaultLocation = snapshot.getValue().toString();
+                System.out.println(DefaultLocation);
+                mMeetLocation.setText(DefaultLocation);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+                mMeetLocation.setText("Fail to read old location");
+            }
+
+
+        });
+
+        mSetLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMeetLocation.setError(null);
+                View focusView = null;
+                boolean cancel = false;
+                meetLocation = mMeetLocation.getText().toString();
+
+                if(TextUtils.isEmpty(meetLocation)) {
+                    mMeetLocation.setError("Please enter the meeting location");
+                    focusView = mMeetLocation;
+                    cancel = true;
+                }
+                if (cancel) {
+                    focusView.requestFocus();
+                } else {
+                    mLocationDisplay.setText(meetLocation);
+                    pushToDataBase(routeID_, meetLocation, calendar);
+                }
+            }
+        });
+
 
         //Pick time's click event listener
-        mPickTime.setOnClickListener(new View.OnClickListener(){
+        mPickTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showDialog(TIME_DIALOG_ID);
@@ -185,38 +237,6 @@ public class TimeAndLocationActivity extends AppCompatActivity {
             }
         });
 
-        final GregorianCalendar time  = new GregorianCalendar(2016, 1, 1);
-        mYear = time.get(Calendar.YEAR);
-        mMonth = time.get(Calendar.MONTH);
-        mDay = time.get(Calendar.DAY_OF_MONTH);
-        mhour = time.get(Calendar.HOUR_OF_DAY);
-        mminute = time.get(Calendar.MINUTE);
-    }
-
-    //-------------------------------------------update date---//
-    private void updateDate() {
-        mDateDisplay.setText(
-                new StringBuilder()
-                        // Month is 0 based so add 1
-                        .append(mDay).append("/")
-                        .append(mMonth + 1).append("/")
-                        .append(mYear).append(" "));
-        showDialog(TIME_DIALOG_ID);
-    }
-
-    //-------------------------------------------update time---//
-    public void updatetime() {
-        mTimeDisplay.setText(
-                new StringBuilder()
-                        .append(pad(mhour)).append(":")
-                        .append(pad(mminute)));
-    }
-
-    private static String pad(int c) {
-        if (c >= 10)
-            return String.valueOf(c);
-        else
-            return "0" + String.valueOf(c);
     }
 
 
@@ -230,7 +250,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                         mYear = year;
                         mMonth = monthOfYear;
                         mDay = dayOfMonth;
-                        updateDate();
+                        showDialog(TIME_DIALOG_ID);
                     }
                 };
 
@@ -241,7 +261,10 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                         mhour = hourOfDay;
                         mminute = minute;
-                        updatetime();
+                        calendar.set(mYear, mMonth, mDay, mhour, mminute);
+                        String str = DateFormat.getDateTimeInstance().format(calendar.getTime());
+                        mTimeDisplay.setText(str);
+                        pushToDataBase(routeID_, meetLocation, calendar);
                     }
                 };
 
@@ -260,4 +283,12 @@ public class TimeAndLocationActivity extends AppCompatActivity {
             }
             return null;
         }
+
+    private void pushToDataBase(String routeID, String meet_loc, GregorianCalendar meet_time) {
+        Firebase ref = new Firebase(FIREBASE_URL);
+        String timeString = DateFormat.getDateTimeInstance().format(meet_time.getTime());
+        String locString = meet_loc;
+        ref.child("routes").child(routeID).child("Time").setValue(timeString);
+        ref.child("routes").child(routeID).child("Location").setValue(locString);
+    }
 }

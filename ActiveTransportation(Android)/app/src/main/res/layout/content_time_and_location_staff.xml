@@ -30,11 +30,13 @@
         android:id="@+id/meeting_location_staff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/route_name"
-        android:layout_centerVertical="true"
-        android:layout_alignParentLeft="true"
         android:textColor="@color/text_color_default"
-        android:textSize="16dp" />
+        android:textSize="16dp"
+        android:layout_below="@+id/route_name_staff"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:id="@+id/input_location"
@@ -43,7 +45,8 @@
         android:hint="Set Location"
         android:maxLines="1"
         android:singleLine="true"
-        android:layout_below="@+id/meeting_location"
+        android:layout_marginTop="23dp"
+        android:layout_below="@+id/meeting_location_staff"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -62,10 +65,10 @@
         android:layout_height="wrap_content"
         android:textColor="@color/text_color_default"
         android:textSize="16dp"
-        android:layout_above="@+id/set_date"
+        android:layout_below="@+id/set_location"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="31dp" />
+        android:layout_marginTop="22dp" />
 
     <Button
         android:id="@+id/set_date"
@@ -74,7 +77,7 @@
         android:layout_height="wrap_content"
         android:text="Set Date"
         android:textStyle="bold"
-        android:layout_centerVertical="true"
+        android:layout_below="@+id/meeting_time_staff"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -86,8 +89,8 @@
         android:text="Set Time"
         android:textStyle="bold"
         android:layout_below="@+id/set_date"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignRight="@+id/meeting_location_staff"
+        android:layout_alignEnd="@+id/meeting_location_staff" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -122,4 +125,5 @@
             android:onClick="switchNotify" />
 
     </LinearLayout>
+
 </RelativeLayout>
