@@ -54,6 +54,10 @@ public class TimeAndLocationActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         ArrayList<String> stuIDs = intent.getStringArrayListExtra(ChecklistActivity.STUIDS);
+        // Get the user identity to find out if the current user is a staff
+        final boolean isStaff = intent.getExtras().getBoolean(ChecklistActivity.ISSTAFF);
+//        System.out.println(isStaff);
+
         final Map<String, ArrayList<String>> stuRouteMap = new HashMap<String, ArrayList<String>>();
 
         final Firebase ref = new Firebase(FIREBASE_URL);
@@ -69,7 +73,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                     ArrayList<String> temp;
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                         String key = postSnapshot.getKey();
-                        System.out.println(key);
+//                        System.out.println(key);
                         Map<String, Object> stuMap = (Map<String, Object>) postSnapshot.getValue();
                         String routeID = (String) stuMap.get("routeID");
                         String name = (String) stuMap.get("name");
@@ -83,14 +87,14 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                     }
 
 
-                    if (stuRouteMap.size() == 1) {
+                    if (isStaff) {
                         ref.child("routes").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
 
                                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                                     String key = postSnapshot.getKey();
-                                    System.out.println(key);
+//                                    System.out.println(key);
                                     Map<String, Object> userMap = (Map<String, Object>) postSnapshot.getValue();
                                     routeID_ = (String) userMap.get("routeID");
                                     location = (String) userMap.get("Location");
@@ -113,6 +117,9 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                                 System.out.println("The read failed: " + firebaseError.getMessage());
                             }
                         });
+                    }
+                    else {
+
                     }
                 }
 
