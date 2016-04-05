@@ -10,18 +10,24 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="activetransportation.myapplication.TimeAndLocation"
-    tools:showIn="@layout/activity_time_and_location">
+    tools:showIn="@layout/activity_time_and_location_staff">
 
     <TextView
-        android:id="@+id/route_name"
+        android:id="@+id/route_name_staff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:textColor="@color/text_color_default"
         android:textSize="16dp" />
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/view">
+
+    </android.support.design.widget.TextInputLayout>
 
     <TextView
-        android:id="@+id/meeting_location"
+        android:id="@+id/meeting_location_staff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/route_name"
@@ -30,15 +36,58 @@
         android:textColor="@color/text_color_default"
         android:textSize="16dp" />
 
+    <EditText
+        android:id="@+id/input_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Set Location"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:layout_below="@+id/meeting_location"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/set_location"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Location"
+        android:textStyle="bold"
+        android:layout_below="@+id/input_location" />
+
     <TextView
-        android:id="@+id/meeting_time"
+        android:id="@+id/meeting_time_staff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/meeting_location"
+        android:textColor="@color/text_color_default"
+        android:textSize="16dp"
+        android:layout_above="@+id/set_date"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="31dp" />
+
+    <Button
+        android:id="@+id/set_date"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Set Date"
+        android:textStyle="bold"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
-        android:textColor="@color/text_color_default"
-        android:textSize="16dp" />
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/set_time"
+        style="?android:textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Set Time"
+        android:textStyle="bold"
+        android:layout_below="@+id/set_date"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -46,7 +95,8 @@
         android:layout_gravity="bottom"
         android:orientation="horizontal"
         android:baselineAligned="false"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:id="@+id/linearLayout">
 
         <Button
             android:id="@+id/checklist_button"

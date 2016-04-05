@@ -28,6 +28,7 @@ public class ChecklistActivity extends AppCompatActivity {
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
     public final static String STUIDS = "ActiveTransport.STUIDS";
     public final static String ROUTEID = "ActiveTransport.ROUTEID";
+    public final static String ISSTAFF = "ActiveTransport.ISSTAFF";
 
     //generate list
     private ArrayList<Student> studentList;
@@ -49,6 +50,12 @@ public class ChecklistActivity extends AppCompatActivity {
     public void switchTimeAndLoc(View view) {
         Intent intent = new Intent(this, TimeAndLocationActivity.class);
         intent.putExtra(STUIDS, stuIDList);
+        if (isStaff_) {
+            intent.putExtra(ROUTEID, routeID_);
+            intent.putExtra(ISSTAFF, true);
+        } else {
+            intent.putExtra(ISSTAFF, false);
+        }
         startActivity(intent);
     }
 
