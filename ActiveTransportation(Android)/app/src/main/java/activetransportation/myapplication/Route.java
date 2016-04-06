@@ -11,10 +11,18 @@ public class Route {
     private String location;
     private ArrayList<String> students;
     private GregorianCalendar time;
+    private String timeStr;
 
     public Route(String name) {
         this.routeName = name;
         this.students = new ArrayList<String>();
+    }
+
+    public Route(String name, String location, String time, ArrayList<String> students) {
+        this.routeName = name;
+        this.location = location;
+        this.timeStr = time;
+        this.students = students;
     }
 
     public String getRouteID() { return routeID; }
@@ -25,6 +33,9 @@ public class Route {
     public String getTimeString() {
         String str = DateFormat.getDateTimeInstance().format(time.getTime());
         return str;
+    }
+    public String getInputTimeString() {
+        return timeStr;
     }
     public ArrayList<String> getStudents() { return students; }
 

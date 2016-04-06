@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
@@ -28,18 +29,21 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     private TextView timeView;
     private TextView routeView;
 
-    private class RouteInfo {
-        public String location;
-        public String meetingTime;
-        public String routeID;
-        public ArrayList<String> studentNameList;
+    private ListView timeandLocListView;
+    private TimeLocationListAdapter adapter;
 
-        public RouteInfo(String location, String meetingTime, ArrayList<String> studentNameList) {
-            this.location = location;
-            this.meetingTime = meetingTime;
-            this.studentNameList = studentNameList;
-        }
-    }
+//    public class RouteInfo {
+//        public String location;
+//        public String meetingTime;
+//        public String routeID;
+//        public ArrayList<String> studentNameList;
+//
+//        public RouteInfo(String location, String meetingTime, ArrayList<String> studentNameList) {
+//            this.location = location;
+//            this.meetingTime = meetingTime;
+//            this.studentNameList = studentNameList;
+//        }
+//    }
 
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
@@ -61,15 +65,21 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
-        setContentView(R.layout.activity_time_and_location);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         Intent intent = getIntent();
         ArrayList<String> stuIDs = intent.getStringArrayListExtra(ChecklistActivity.STUIDS);
         // Get the user identity to find out if the current user is a staff
         final boolean isStaff = intent.getExtras().getBoolean(ChecklistActivity.ISSTAFF);
-//        System.out.println(isStaff);
+
+        if (isStaff) {
+            setContentView(R.layout.activity_time_and_location);
+        }
+        else {
+            setContentView(R.layout.activity_time_and_location_parent);
+        }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         final Map<String, ArrayList<String>> stuRouteMap = new HashMap<String, ArrayList<String>>();
 
@@ -133,7 +143,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                     }
 
                     else {
-                        final Map<String, RouteInfo> routeMap = new HashMap<String, RouteInfo>();
+                        final ArrayList<Route> routeList = new ArrayList<Route>();
                         for (final String routeID : stuRouteMap.keySet()) {
                             ref.child("routes").child(routeID).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -141,13 +151,14 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                                     Map<String, Object> rMap = (Map<String, Object>) snapshot.getValue();
                                     String rLocation = rMap.get("Location").toString();
                                     String rTime = rMap.get("Time").toString();
+                                    String rName = rMap.get("name").toString();
 
 //                                    System.out.print("Location is ");
 //                                    System.out.println(rLocation);
 //                                    System.out.print("Time is ");
 //                                    System.out.println(rTime);
-                                    RouteInfo rInfo = new RouteInfo(rLocation, rTime, stuRouteMap.get(routeID));
-                                    routeMap.put(routeID, rInfo);
+                                    Route route = new Route(rName, rLocation, rTime, stuRouteMap.get(routeID));
+                                    routeList.add(route);
                                 }
 
                                 @Override
@@ -156,7 +167,11 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                                 }
                             });
                         }
+                        adapter = new TimeLocationListAdapter(routeList, TimeAndLocationActivity.this);
 
+                        //handle listview and assign adapter
+                        timeandLocListView = (ListView) findViewById(R.id.time_loc_list);
+                        timeandLocListView.setAdapter(adapter);
 
                     }
                 }
