@@ -90,7 +90,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
             setSupportActionBar(toolbar);
             setStaff(intent);
         } else {
-            setContentView(R.layout.activity_time_and_location);
+            setContentView(R.layout.activity_time_and_location_parent);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             setParent(intent);
