@@ -12,7 +12,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:textColor="@color/text_color_default"
-        android:textSize="20dp" />
+        android:textSize="15dp" />
 
     <TextView
         android:id="@+id/m_time"
@@ -20,8 +20,10 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@+id/contact_btn"
-        android:layout_marginRight="20dp"
-        android:text="" />
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:text="U.C. 0079"
+        android:textSize="10dp"/>
 
     <!--<ListView-->
         <!--android:id="@+id/m_student_name"-->

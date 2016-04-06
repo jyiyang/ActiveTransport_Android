@@ -7,6 +7,7 @@
         android:id="@+id/loc_stu_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textSize="17dip"/>
+        android:padding="5dip"
+        android:textSize="15dp"/>
 
 </LinearLayout>

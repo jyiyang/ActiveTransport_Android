@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -28,9 +29,11 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     private TextView locView;
     private TextView timeView;
     private TextView routeView;
+    private ArrayList<Route> routeList = new ArrayList<Route>();
 
-    private ListView timeandLocListView;
-    private TimeLocationListAdapter adapter;
+
+    private ExpandableListView timeandLocListView;
+    private ExpandableTimeLocationListAdapter adapter;
 
 //    public class RouteInfo {
 //        public String location;
@@ -143,7 +146,8 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                     }
 
                     else {
-                        final ArrayList<Route> routeList = new ArrayList<Route>();
+                        System.out.print("Number of routes in stuRouteMap is: ");
+                        System.out.println(stuRouteMap.keySet().size());
                         for (final String routeID : stuRouteMap.keySet()) {
                             ref.child("routes").child(routeID).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
@@ -153,10 +157,10 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                                     String rTime = rMap.get("Time").toString();
                                     String rName = rMap.get("name").toString();
 
-//                                    System.out.print("Location is ");
-//                                    System.out.println(rLocation);
-//                                    System.out.print("Time is ");
-//                                    System.out.println(rTime);
+                                    System.out.print("Location is ");
+                                    System.out.println(rLocation);
+                                    System.out.print("Time is ");
+                                    System.out.println(rTime);
                                     Route route = new Route(rName, rLocation, rTime, stuRouteMap.get(routeID));
                                     routeList.add(route);
                                 }
@@ -167,10 +171,12 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                                 }
                             });
                         }
-                        adapter = new TimeLocationListAdapter(routeList, TimeAndLocationActivity.this);
+                        System.out.print("Number of routes in routeList is: ");
+                        System.out.println(routeList.size());
+                        adapter = new ExpandableTimeLocationListAdapter(TimeAndLocationActivity.this, routeList);
 
                         //handle listview and assign adapter
-                        timeandLocListView = (ListView) findViewById(R.id.time_loc_list);
+                        timeandLocListView = (ExpandableListView) findViewById(R.id.time_loc_list);
                         timeandLocListView.setAdapter(adapter);
 
                     }

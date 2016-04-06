@@ -36,6 +36,7 @@
             android:layout_height="90sp"
             android:layout_weight="1"
             android:text="Checklist"
+            android:onClick="switchChecklist"
             android:drawableTop="@drawable/ic_group_black_24dp"/>
 
         <Button
