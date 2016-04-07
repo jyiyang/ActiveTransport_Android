@@ -1,35 +1,19 @@
 package activetransportation.myapplication;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ExpandableListAdapter;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.Map;
 
 
 public class ExpandableTimeLocationListAdapter extends BaseExpandableListAdapter implements ExpandableListAdapter {
     public final static String CONTACT_INFO = "ActiveTransport.CONTACT_INFO";
-    private ArrayList<Route> routeList = new ArrayList<Route>();
+    private ArrayList<Route> routeList;
     private Context context;
     private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
     private LayoutInflater inflater;
@@ -38,7 +22,7 @@ public class ExpandableTimeLocationListAdapter extends BaseExpandableListAdapter
         TextView textLabel;
     }
 
-    public ExpandableTimeLocationListAdapter(Context context, ArrayList<Route> routeList) {
+    public ExpandableTimeLocationListAdapter(ArrayList<Route> routeList, Context context) {
 //        this.isStaff = Boolean.parseBoolean(list.get(0).getName());
         this.routeList = routeList;
         this.context = context;

@@ -16,7 +16,9 @@ import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class TimeAndLocationActivity extends AppCompatActivity {
 
@@ -28,7 +30,8 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     private TextView locView;
     private TextView timeView;
     private TextView routeView;
-    private ArrayList<Route> routeList = new ArrayList<Route>();
+    private Set<Route> routeSet;
+    private ArrayList<Route> routeList;
 
 
     private ExpandableListView timeandLocListView;
@@ -147,32 +150,36 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                     else {
                         System.out.print("Number of routes in stuRouteMap is: ");
                         System.out.println(stuRouteMap.keySet().size());
-
+                        routeSet = new HashSet<Route>();
                         ref.child("routes").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot snapshot) {
 
                                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                                     Map<String, Object> rMap = (Map<String, Object>) postSnapshot.getValue();
-                                    rID = (String) rMap.get("routeID");
+                                    String rID = postSnapshot.getKey();
+                                    System.out.println(rID);
                                     if (stuRouteMap.containsKey(rID)) {
                                         String rLocation = rMap.get("Location").toString();
                                         String rTime = rMap.get("Time").toString();
                                         String rName = rMap.get("name").toString();
-                                        Route route = new Route(rName, rLocation, rTime, stuRouteMap.get(routeID));
-                                        routeList.add(route);
+                                        Route route = new Route(rName, rLocation, rTime, stuRouteMap.get(rID));
+                                        routeSet.add(route);
                                     }
                                 }
                                 // System.out.print("Location is ");
                                 // System.out.println(rLocation);
                                 // System.out.print("Time is ");
                                 // System.out.println(rTime);
+                                if (routeSet.size() == stuRouteMap.keySet().size()) {
+                                    routeList = new ArrayList<Route>(routeSet);
+                                    System.out.print("Number of routes in routeList is: ");
+                                    System.out.println(routeList.size());
+                                    adapter = new ExpandableTimeLocationListAdapter(routeList, TimeAndLocationActivity.this);
 
-                                adapter = new ExpandableTimeLocationListAdapter(TimeAndLocationActivity.this, routeList);
-
-                                //handle listview and assign adapter
-                                timeandLocListView = (ExpandableListView) findViewById(R.id.time_loc_list);
-                                timeandLocListView.setAdapter(adapter);
+                                    //handle listview and assign adapter
+                                    timeandLocListView = (ExpandableListView) findViewById(R.id.time_loc_list);
+                                    timeandLocListView.setAdapter(adapter);
                                 }
                             }
 
