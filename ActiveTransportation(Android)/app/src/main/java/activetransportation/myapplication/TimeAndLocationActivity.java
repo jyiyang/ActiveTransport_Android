@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -194,11 +195,26 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                 String DefaultLocation = snapshot.getValue().toString();
                 System.out.println(DefaultLocation);
                 mMeetLocation.setText(DefaultLocation);
+                mMeetLocation.setTextColor(Color.parseColor("#eaeaea"));
+                mLocationDisplay.setText(DefaultLocation);
             }
 
             @Override
             public void onCancelled(FirebaseError error) {
-                mMeetLocation.setText("Fail to read old location");
+                mMeetLocation.setText("Fail to read defalut location");
+            }
+        });
+
+        ref.child("routes").child(routeID_).child("Time").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                String DefaulTime = snapshot.getValue().toString();
+                mTimeDisplay.setText(DefaulTime);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError error) {
+                mMeetLocation.setText("Fail to read default time");
             }
         });
 
