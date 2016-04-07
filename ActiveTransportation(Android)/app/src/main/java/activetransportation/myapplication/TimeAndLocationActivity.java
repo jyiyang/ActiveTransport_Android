@@ -195,7 +195,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                 String DefaultLocation = snapshot.getValue().toString();
                 System.out.println(DefaultLocation);
                 mMeetLocation.setText(DefaultLocation);
-                mMeetLocation.setTextColor(Color.parseColor("#eaeaea"));
+                mMeetLocation.setTextColor(Color.parseColor("#a9a9a9"));
                 mLocationDisplay.setText(DefaultLocation);
             }
 
