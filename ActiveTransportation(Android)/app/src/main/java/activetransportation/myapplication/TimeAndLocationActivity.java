@@ -147,37 +147,40 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                     else {
                         System.out.print("Number of routes in stuRouteMap is: ");
                         System.out.println(stuRouteMap.keySet().size());
-                        for (final String routeID : stuRouteMap.keySet()) {
-                            ref.child("routes").child(routeID).addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    Map<String, Object> rMap = (Map<String, Object>) snapshot.getValue();
-                                    String rLocation = rMap.get("Location").toString();
-                                    String rTime = rMap.get("Time").toString();
-                                    String rName = rMap.get("name").toString();
 
-                                    System.out.print("Location is ");
-                                    System.out.println(rLocation);
-                                    System.out.print("Time is ");
-                                    System.out.println(rTime);
-                                    Route route = new Route(rName, rLocation, rTime, stuRouteMap.get(routeID));
-                                    routeList.add(route);
+                        ref.child("routes").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot snapshot) {
 
-                                    if (routeList.size() == stuRouteMap.keySet().size()) {
-                                        adapter = new ExpandableTimeLocationListAdapter(TimeAndLocationActivity.this, routeList);
-
-                                        //handle listview and assign adapter
-                                        timeandLocListView = (ExpandableListView) findViewById(R.id.time_loc_list);
-                                        timeandLocListView.setAdapter(adapter);
+                                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                                    Map<String, Object> rMap = (Map<String, Object>) postSnapshot.getValue();
+                                    rID = (String) rMap.get("routeID");
+                                    if (stuRouteMap.containsKey(rID)) {
+                                        String rLocation = rMap.get("Location").toString();
+                                        String rTime = rMap.get("Time").toString();
+                                        String rName = rMap.get("name").toString();
+                                        Route route = new Route(rName, rLocation, rTime, stuRouteMap.get(routeID));
+                                        routeList.add(route);
                                     }
                                 }
+                                // System.out.print("Location is ");
+                                // System.out.println(rLocation);
+                                // System.out.print("Time is ");
+                                // System.out.println(rTime);
 
-                                @Override
-                                public void onCancelled(FirebaseError firebaseError) {
-                                    System.out.println("The read failed: " + firebaseError.getMessage());
+                                adapter = new ExpandableTimeLocationListAdapter(TimeAndLocationActivity.this, routeList);
+
+                                //handle listview and assign adapter
+                                timeandLocListView = (ExpandableListView) findViewById(R.id.time_loc_list);
+                                timeandLocListView.setAdapter(adapter);
                                 }
-                            });
-                        }
+                            }
+
+                            @Override
+                            public void onCancelled(FirebaseError firebaseError) {
+                                System.out.println("The read failed: " + firebaseError.getMessage());
+                            }
+                        });
                         //System.out.print("Number of routes in routeList is: ");
                         //System.out.println(routeList.size());
 
