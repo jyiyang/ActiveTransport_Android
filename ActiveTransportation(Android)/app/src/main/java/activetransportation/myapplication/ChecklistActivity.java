@@ -127,6 +127,12 @@ public class ChecklistActivity extends AppCompatActivity {
         //putStudent(student1, studentsRef);
         //putStudent(student2, studentsRef);
         //putStudent(student3, studentsRef);
+        //Map<String, String> post = new HashMap<String, String>();
+        //post.put("Location", "loc");
+        //post.put("Staff", "Staff B");
+        //post.put("Time", "8:00");
+        //post.put("name", "route 2");
+        //ref.child("routes").push().setValue(post);
 
         if (isStaff) {
             String routeID = (String) maybeRouteID;
@@ -156,6 +162,7 @@ public class ChecklistActivity extends AppCompatActivity {
                             stuIDList.add((String) postSnapshot.getKey());
                         }
                     }
+                    //System.out.println(stuIDList.size());
                     createListHelper();
                 }
                 @Override

@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
@@ -163,6 +162,14 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                                     System.out.println(rTime);
                                     Route route = new Route(rName, rLocation, rTime, stuRouteMap.get(routeID));
                                     routeList.add(route);
+
+                                    if (routeList.size() == stuRouteMap.keySet().size()) {
+                                        adapter = new ExpandableTimeLocationListAdapter(TimeAndLocationActivity.this, routeList);
+
+                                        //handle listview and assign adapter
+                                        timeandLocListView = (ExpandableListView) findViewById(R.id.time_loc_list);
+                                        timeandLocListView.setAdapter(adapter);
+                                    }
                                 }
 
                                 @Override
@@ -171,13 +178,9 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                                 }
                             });
                         }
-                        System.out.print("Number of routes in routeList is: ");
-                        System.out.println(routeList.size());
-                        adapter = new ExpandableTimeLocationListAdapter(TimeAndLocationActivity.this, routeList);
+                        //System.out.print("Number of routes in routeList is: ");
+                        //System.out.println(routeList.size());
 
-                        //handle listview and assign adapter
-                        timeandLocListView = (ExpandableListView) findViewById(R.id.time_loc_list);
-                        timeandLocListView.setAdapter(adapter);
 
                     }
                 }
