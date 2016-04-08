@@ -21,6 +21,10 @@ public class ExpandableTimeLocationListAdapter extends BaseExpandableListAdapter
     private static final class ViewHolder {
         TextView textLabel;
     }
+    private static final class ViewHolderGroup {
+        TextView text1;
+        TextView text2;
+    }
 
     public ExpandableTimeLocationListAdapter(ArrayList<Route> routeList, Context context) {
 //        this.isStaff = Boolean.parseBoolean(list.get(0).getName());
@@ -28,9 +32,8 @@ public class ExpandableTimeLocationListAdapter extends BaseExpandableListAdapter
         this.context = context;
         System.out.print("Number of routes (from constructor) are: ");
         System.out.println(routeList.size());
-
-
     }
+
     @Override
     public String getChild(int groupPosition, int childPosition) {
         return routeList.get(groupPosition).getStudents().get(childPosition);
@@ -86,7 +89,7 @@ public class ExpandableTimeLocationListAdapter extends BaseExpandableListAdapter
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
         View resultView = convertView;
-        ViewHolder holder;
+        ViewHolderGroup holder;
         System.out.print("Number of routes (from GroupView) are: ");
         System.out.println(getGroupCount());
 
@@ -97,22 +100,24 @@ public class ExpandableTimeLocationListAdapter extends BaseExpandableListAdapter
             resultView = inflater.inflate(R.layout.loc_row_layout, parent, false);
 
 //            System.out.println(2);
-            holder = new ViewHolder();
+            holder = new ViewHolderGroup();
 //            System.out.println(3);
-            holder.textLabel = (TextView) resultView.findViewById(R.id.m_location);
+            holder.text1 = (TextView) resultView.findViewById(R.id.m_location);
+            holder.text2 = (TextView) resultView.findViewById(R.id.m_time);
 //            System.out.println(4);
             resultView.setTag(holder);
 //            System.out.println(5);
         }
         else {
 //            System.out.println(6);
-            holder = (ViewHolder) resultView.getTag();
+            holder = (ViewHolderGroup) resultView.getTag();
         }
 
 //        System.out.println(7);
         final Route route = getGroup(groupPosition);
 //        System.out.println(8);
-        holder.textLabel.setText(route.getLocation());
+        holder.text1.setText(route.getLocation());
+        holder.text2.setText(route.getInputTimeString());
 //        System.out.println(9);
         return resultView;
     }

@@ -22,7 +22,6 @@
         android:layout_toLeftOf="@+id/contact_btn"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
-        android:text="U.C. 0079"
         android:textSize="10dp"/>
 
     <!--<ListView-->
