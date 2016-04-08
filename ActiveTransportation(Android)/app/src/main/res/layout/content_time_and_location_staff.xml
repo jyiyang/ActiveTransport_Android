@@ -63,24 +63,13 @@
 
 
     <Button
-        android:id="@+id/set_date"
-        style="?android:textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Set Date"
-        android:textStyle="bold"
-        android:layout_below="@+id/input_location"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
-
-    <Button
         android:id="@+id/set_time"
         style="?android:textAppearanceSmall"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Set Time"
         android:textStyle="bold"
-        android:layout_below="@+id/set_date"
+        android:layout_below="@+id/input_location"
         android:layout_alignRight="@+id/meeting_location_staff"
         android:layout_alignEnd="@+id/meeting_location_staff" />
 

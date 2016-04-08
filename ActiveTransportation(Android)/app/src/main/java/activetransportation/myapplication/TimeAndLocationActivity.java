@@ -24,11 +24,13 @@ import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -194,9 +196,8 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         routeID_ = intent.getStringExtra(ChecklistActivity.ROUTEID);
         Firebase ref = new Firebase(FIREBASE_URL);
 
-        mPickDate =(Button)findViewById(R.id.set_date);
+        mPickTime =(Button)findViewById(R.id.set_time);
         mTimeDisplay = (TextView) findViewById(R.id.meeting_time_staff);
-        mPickTime = (Button) findViewById(R.id.set_time);
         mMeetLocation = (EditText) findViewById(R.id.input_location);
         mSetLocation = (Button) findViewById(R.id.set_location);
         mLocationDisplay = (TextView) findViewById(R.id.meeting_location_staff);
@@ -262,13 +263,6 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         mPickTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialog(TIME_DIALOG_ID);
-            }
-        });
-
-        //PickDate's click event listener
-        mPickDate.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
                 showDialog(DATE_DIALOG_ID);
             }
         });
@@ -298,8 +292,9 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                         mhour = hourOfDay;
                         mminute = minute;
                         calendar.set(mYear, mMonth, mDay, mhour, mminute);
-                        String str = DateFormat.getDateTimeInstance().format(calendar.getTime());
-                        mTimeDisplay.setText(str);
+                        String timeString =
+                                android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", new java.util.Date()).toString();
+                        mTimeDisplay.setText(timeString);
                     }
                 };
 
@@ -321,7 +316,8 @@ public class TimeAndLocationActivity extends AppCompatActivity {
 
     private void pushToDataBase(String routeID, String meet_loc, GregorianCalendar meet_time) {
         Firebase ref = new Firebase(FIREBASE_URL);
-        String timeString = DateFormat.getDateTimeInstance().format(meet_time.getTime());
+        String timeString =
+                android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", new java.util.Date()).toString();
         String locString = meet_loc;
         ref.child("routes").child(routeID).child("Time").setValue(timeString);
         ref.child("routes").child(routeID).child("Location").setValue(locString);
