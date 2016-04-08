@@ -232,7 +232,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(FirebaseError error) {
-                mMeetLocation.setText("Fail to read default time");
+                mTimeDisplay.setText("Fail to read default time");
             }
         });
 
@@ -293,7 +293,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                         mminute = minute;
                         calendar.set(mYear, mMonth, mDay, mhour, mminute);
                         String timeString =
-                                android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", new java.util.Date()).toString();
+                                android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", calendar).toString();
                         mTimeDisplay.setText(timeString);
                     }
                 };
@@ -317,7 +317,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     private void pushToDataBase(String routeID, String meet_loc, GregorianCalendar meet_time) {
         Firebase ref = new Firebase(FIREBASE_URL);
         String timeString =
-                android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", new java.util.Date()).toString();
+                android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", calendar).toString();
         String locString = meet_loc;
         ref.child("routes").child(routeID).child("Time").setValue(timeString);
         ref.child("routes").child(routeID).child("Location").setValue(locString);
