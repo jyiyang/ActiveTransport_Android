@@ -11,6 +11,43 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="activetransportation.myapplication.Notify"
     tools:showIn="@layout/activity_notify">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation = "vertical">
+
+        <EditText
+            android:id="@+id/msg_content"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Enter your message here" />
+
+        <Button
+            android:id="@+id/text_all_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Text all parents"
+            android:onClick="textAllParents"/>
+
+        <Button
+            android:id="@+id/text_notchecked_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Text all Unchecked student's parent"
+            android:onClick="textAllParents"/>
+
+        <Button
+            android:id="@+id/text_checked_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Text all checked student's parent"
+            android:onClick="textAllParents"/>
+
+    </LinearLayout>
+
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
