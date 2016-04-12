@@ -35,14 +35,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Text all Unchecked student's parent"
-            android:onClick="textAllParents"/>
+            android:onClick="textNotArrivedParents"/>
 
         <Button
             android:id="@+id/text_checked_parent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Text all checked student's parent"
-            android:onClick="textAllParents"/>
+            android:onClick="textArrivedParents"/>
 
     </LinearLayout>
 
