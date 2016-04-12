@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.BoringLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,8 +17,11 @@ import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class ChecklistActivity extends AppCompatActivity {
 
@@ -39,6 +43,7 @@ public class ChecklistActivity extends AppCompatActivity {
     private Object routeIDs;
     private String userID_;
     private String userEmail;
+    private Boolean logArrived = false;
 
 
     /* Switch activities when click on tabs */
@@ -113,7 +118,7 @@ public class ChecklistActivity extends AppCompatActivity {
                     if (isStaff_) {
                         routeID_ = (String) userMap.get("routeID");
                     } else {
-                        childrenIDs_= new ArrayList<String>(((Map<String, Object>) userMap.get("childrenIDs")).keySet());
+                        childrenIDs_ = new ArrayList<String>(((Map<String, Object>) userMap.get("childrenIDs")).keySet());
                     }
                     userID_ = key;
                 }
@@ -199,7 +204,8 @@ public class ChecklistActivity extends AppCompatActivity {
                         Map<String, Object> stuMap = (Map<String, Object>) postSnapshot.getValue();
                         Student student = new Student((String) stuMap.get("name"));
                         student.setID(postSnapshot.getKey());
-                        student.setIsArrived((Boolean) stuMap.get("isArrived"));
+                        boolean arrived = logHelper(student.getID());
+                        student.setIsArrived(arrived);
                         student.setParentID((String) stuMap.get("parentID"));
                         student.setRouteID((String) stuMap.get("routeID"));
                         studentList.add(student);
@@ -223,6 +229,39 @@ public class ChecklistActivity extends AppCompatActivity {
             }
         });
 
+    }
+    //Create log if not existing
+    private boolean logHelper(String studentID) {
+        Firebase ref = new Firebase(FIREBASE_URL);
+        GregorianCalendar time = new GregorianCalendar();
+        final String id = studentID;
+        if (time.get(Calendar.AM_PM) == 1) {
+            final String timeOfDay = "afternoon";
+        }
+        final String timeOfDay = "morning";
+
+        final String timeString =
+                android.text.format.DateFormat.format("yyyy-MM-dd", time).toString();
+        final Firebase logRef = ref.child("logs");
+        logRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.child(timeString).child(timeOfDay).hasChild(id)) {
+                    logArrived = (Boolean) dataSnapshot.child(timeString).child(timeOfDay).child(id).getValue();
+                } else {
+                    Map<String, Object> amOrPm = new HashMap<String, Object>();
+                    Boolean isArrived = false;
+                    amOrPm.put(id, isArrived);
+                    logRef.child(timeString).child(timeOfDay).updateChildren(amOrPm);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("Fail to read from log");
+            }
+        });
+        return logArrived;
     }
 
     @Override
