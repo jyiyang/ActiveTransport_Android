@@ -18,6 +18,9 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -73,36 +76,24 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
         if (!isStaff) { checkBox.setEnabled(false); }
 
         Firebase ref = new Firebase(FIREBASE_URL);
-        Firebase studentsRef = ref.child("students");
         //Query queryRef = studentsRef.orderByKey().equalTo(student.getID());
 
-        // Attach an listener to read the data at our posts reference
-        studentsRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-
-                for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    String key = postSnapshot.getKey();
-                    if (key == student.getID()) {
-                        Map<String, Object> stuMap = (Map<String, Object>) postSnapshot.getValue();
-                        checkBox.setChecked((Boolean) stuMap.get("isArrived"));
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
-            }
-        });
+        logHelper(student.getID(),checkBox);
 
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // update your model (or other business logic) based on isChecked
                 Firebase ref = new Firebase(FIREBASE_URL);
-                Firebase studentsRef = ref.child("students");
-                studentsRef.child(student.getID()).child("isArrived").setValue(isChecked);
+                GregorianCalendar time = new GregorianCalendar();
+                if (time.get(Calendar.AM_PM) == 1) {
+                    final String timeOfDay = "afternoon";
+                }
+                final String timeOfDay = "morning";
+
+                final String timeString =
+                        android.text.format.DateFormat.format("yyyy-MM-dd", time).toString();
+                Firebase logRef = ref.child("logs");
+                logRef.child(timeString).child(timeOfDay).child(student.getID()).setValue(isChecked);
                 student.setIsArrived(isChecked);
             }
         });
@@ -135,6 +126,42 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
         });
 
         return view;
+    }
+
+    private void logHelper(String studentID, final CheckBox checkBox) {
+        Firebase ref = new Firebase(FIREBASE_URL);
+        GregorianCalendar time = new GregorianCalendar();
+        final String id = studentID;
+        if (time.get(Calendar.AM_PM) == 1) {
+            final String timeOfDay = "afternoon";
+        }
+        final String timeOfDay = "morning";
+
+        final String timeString =
+                android.text.format.DateFormat.format("yyyy-MM-dd", time).toString();
+        final Firebase logRef = ref.child("logs");
+
+        logRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Boolean logArrived = false;
+                if (dataSnapshot.child(timeString).child(timeOfDay).hasChild(id)) {
+                    logArrived = (Boolean) dataSnapshot.child(timeString).child(timeOfDay).child(id).getValue();
+                } else {
+                    Map<String, Object> amOrPm = new HashMap<String, Object>();
+                    Boolean isArrived = false;
+                    amOrPm.put(id, isArrived);
+                    logRef.child(timeString).child(timeOfDay).updateChildren(amOrPm);
+                    logArrived = false;
+                }
+                checkBox.setChecked(logArrived);
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("Fail to read from log");
+            }
+        });
     }
 }
 
