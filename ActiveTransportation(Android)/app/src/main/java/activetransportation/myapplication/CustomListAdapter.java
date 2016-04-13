@@ -30,7 +30,7 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
     private Context context;
     private Boolean isStaff;
     private String staffID;
-    private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+    private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
 
     public CustomListAdapter(ArrayList<Student> list, Context context) {
         this.isStaff = Boolean.parseBoolean(list.get(0).getName());

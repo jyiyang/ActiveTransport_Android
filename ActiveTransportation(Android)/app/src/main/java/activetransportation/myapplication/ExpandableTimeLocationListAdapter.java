@@ -15,7 +15,7 @@ public class ExpandableTimeLocationListAdapter extends BaseExpandableListAdapter
     public final static String CONTACT_INFO = "ActiveTransport.CONTACT_INFO";
     private ArrayList<Route> routeList;
     private Context context;
-    private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+    private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
     private LayoutInflater inflater;
 
     private static final class ViewHolder {

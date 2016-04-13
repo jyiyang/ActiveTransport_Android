@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private static final int REQUEST_READ_CONTACTS = 0;
     public final static String CHECKLIST = "ActiveTransport.CHECKLIST";
-    private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+    private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
     //private String userID;
 
     /**

@@ -9,15 +9,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
 import com.firebase.client.Firebase;
-import com.firebase.client.AuthData;
 import com.firebase.client.FirebaseError;
 
 import java.util.HashMap;
@@ -27,7 +24,7 @@ import java.util.Map;
  * Created by KritiKAl on 3/30/2016.
  */
 public class RegisterActivity extends AppCompatActivity {
-    private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+    private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
     private EditText mFirstNameView;
     private EditText mLastNameView;
     private EditText mEmailView;
@@ -180,7 +177,7 @@ public class RegisterActivity extends AppCompatActivity {
     public User createUser(String id, String firstName, String lastName,  String email,  String phone,
                            boolean isStaff)
     {
-        User newUser = new User (id, email, lastName + " " + firstName, phone, isStaff);
+        User newUser = new User (id, email, firstName + " " + lastName, phone, isStaff);
         return newUser;
     }
 

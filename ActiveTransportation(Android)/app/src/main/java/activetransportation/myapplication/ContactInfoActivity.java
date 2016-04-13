@@ -16,7 +16,7 @@ import com.firebase.client.ValueEventListener;
 
 public class ContactInfoActivity extends AppCompatActivity {
 
-    private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+    private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
     //private TextView nameView;
     private TextView userView;
     private TextView phoneView;
@@ -61,7 +61,7 @@ public class ContactInfoActivity extends AppCompatActivity {
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                         String key = postSnapshot.getKey();
                         System.out.println(key);
-                        if (key == "Staff") {
+                        if (key == "staffID") {
                             staffID = (String) postSnapshot.getValue();
                             break;
                         }
