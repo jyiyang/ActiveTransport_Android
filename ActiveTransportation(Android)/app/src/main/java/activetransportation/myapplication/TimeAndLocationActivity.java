@@ -1,6 +1,5 @@
 package activetransportation.myapplication;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -33,7 +31,7 @@ import java.util.Set;
 
 public class TimeAndLocationActivity extends AppCompatActivity {
 
-    private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+    private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
     private String location;
     private String time;
     private String routeID_;
@@ -154,8 +152,8 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                                 String rID = postSnapshot.getKey();
                                 System.out.println(rID);
                                 if (stuRouteMap.containsKey(rID)) {
-                                    String rLocation = rMap.get("Location").toString();
-                                    String rTime = rMap.get("Time").toString();
+                                    String rLocation = rMap.get("meetingLocation").toString();
+                                    String rTime = rMap.get("meetingTime").toString();
                                     String rName = rMap.get("name").toString();
                                     Route route = new Route(rName, rLocation, rTime, stuRouteMap.get(rID));
                                     routeSet.add(route);
@@ -205,7 +203,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         mMonth = calendar.get(Calendar.MONTH);
         mDay = calendar.get(Calendar.DAY_OF_MONTH);
 
-        ref.child("routes").child(routeID_).child("Location").addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child("routes").child(routeID_).child("meetingLocation").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 String DefaultLocation = snapshot.getValue().toString();
@@ -221,7 +219,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
             }
         });
 
-        ref.child("routes").child(routeID_).child("Time").addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.child("routes").child(routeID_).child("meetingTime").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 String DefaulTime = snapshot.getValue().toString();
@@ -291,7 +289,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         String timeString =
                 android.text.format.DateFormat.format("yyyy-MM-dd hh:mm aa", calendar).toString();
         String locString = meet_loc;
-        ref.child("routes").child(routeID).child("Time").setValue(timeString);
-        ref.child("routes").child(routeID).child("Location").setValue(locString);
+        ref.child("routes").child(routeID).child("meetingTime").setValue(timeString);
+        ref.child("routes").child(routeID).child("meetingLocation").setValue(locString);
     }
 }

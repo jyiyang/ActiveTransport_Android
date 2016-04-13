@@ -27,7 +27,7 @@ public class ChecklistActivity extends AppCompatActivity {
     //private ArrayAdapter arrayAdapter;
     private CustomListAdapter adapter;
 
-    private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+    private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
     public final static String STUIDS = "ActiveTransport.STUIDS";
     public final static String ROUTEID = "ActiveTransport.ROUTEID";
     public final static String ISSTAFF = "ActiveTransport.ISSTAFF";
@@ -42,6 +42,7 @@ public class ChecklistActivity extends AppCompatActivity {
     private String userID_;
     private String userEmail;
     private Boolean logArrived = false;
+    private String timeOfDay;
 
 
     /* Switch activities when click on tabs */
@@ -78,7 +79,7 @@ public class ChecklistActivity extends AppCompatActivity {
     public void putStudent(Student student, Firebase studentsRef) {
         Map<String, Object> stuMap = new HashMap<String, Object>();
         stuMap.put("name", student.getName());
-        stuMap.put("isArrived", student.getIsArrived());
+        //stuMap.put("isArrived", student.getIsArrived());
         Firebase stuRef = studentsRef.push();
         stuRef.setValue(stuMap);
         student.setID(stuRef.getKey());
@@ -94,6 +95,7 @@ public class ChecklistActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         Intent intent = getIntent();
 
         userEmail = intent.getStringExtra(LoginActivity.CHECKLIST);
@@ -103,6 +105,13 @@ public class ChecklistActivity extends AppCompatActivity {
         //Firebase userRef = ref.child("users").child(userID);
         Query userRef = ref.child("users").orderByChild("email").equalTo(userEmail);
         //System.out.println(userRef);
+
+        //Map<String, String> post = new HashMap<String, String>();
+        //post.put("Location", "Sprague");
+        //post.put("StaffID", "3a03399f-f24f-4246-94ec-27414c414c94");
+        //post.put("Time", "2016-04-12 12:00");
+        //post.put("name", "Route 3");
+        //ref.child("routes").push().setValue(post);
 
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -135,24 +144,9 @@ public class ChecklistActivity extends AppCompatActivity {
 
         Firebase ref = new Firebase(FIREBASE_URL);
 
-        // the following code is commented since we only put data into Firebase once
-
-        //Student student1 = new Student("Yiqing Cai");
-        //Student student2 = new Student("Yi Yang");
-        //Student student3 = new Student("Weiyun Ma");
-        //putStudent(student1, studentsRef);
-        //putStudent(student2, studentsRef);
-        //putStudent(student3, studentsRef);
-        //Map<String, String> post = new HashMap<String, String>();
-        //post.put("Location", "loc");
-        //post.put("Staff", "Staff B");
-        //post.put("Time", "8:00");
-        //post.put("name", "route 2");
-        //ref.child("routes").push().setValue(post);
-
         if (isStaff) {
             String routeID = (String) maybeRouteID;
-            ref.child("routes").child(routeID).child("Students").addListenerForSingleValueEvent(new ValueEventListener() {
+            ref.child("routes").child(routeID).child("students").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     stuIDList = new ArrayList<String>();
@@ -235,9 +229,10 @@ public class ChecklistActivity extends AppCompatActivity {
         GregorianCalendar time = new GregorianCalendar();
         final String id = studentID;
         if (time.get(Calendar.AM_PM) == 1) {
-            final String timeOfDay = "afternoon";
+            timeOfDay = "afternoon";
+        } else {
+            timeOfDay = "morning";
         }
-        final String timeOfDay = "morning";
 
         final String timeString =
                 android.text.format.DateFormat.format("yyyy-MM-dd", time).toString();

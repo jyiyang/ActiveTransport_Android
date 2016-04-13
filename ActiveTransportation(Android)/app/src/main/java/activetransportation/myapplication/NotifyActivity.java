@@ -25,7 +25,7 @@ import java.util.Map;
 public class NotifyActivity extends AppCompatActivity {
 
     // Database link
-    private static final String FIREBASE_URL = "https://active-transportation.firebaseIO.com";
+    private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
     // Class attributes
     private ArrayList<String> studentID;
 
