@@ -51,10 +51,11 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
 
     @Override
     public long getItemId(int pos) {
-        //return list.get(pos).getId();
+        return pos;
         //just return 0 if your list items do not have an Id variable.
-        return 0;
+        //return 0;
     }
+
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
