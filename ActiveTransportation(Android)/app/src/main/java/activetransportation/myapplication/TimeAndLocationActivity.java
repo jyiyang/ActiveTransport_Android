@@ -269,22 +269,6 @@ public class TimeAndLocationActivity extends AppCompatActivity {
 
     }
 
-
-        //Datepicker dialog generation
-
-        private DatePickerDialog.OnDateSetListener mDateSetListener =
-                new DatePickerDialog.OnDateSetListener() {
-
-                    public void onDateSet(DatePicker view, int year,
-                                          int monthOfYear, int dayOfMonth) {
-                        mYear = year;
-                        mMonth = monthOfYear;
-                        mDay = dayOfMonth;
-                        showDialog(TIME_DIALOG_ID);
-                    }
-                };
-
-
         // Timepicker dialog generation
         private TimePickerDialog.OnTimeSetListener mTimeSetListener =
                 new TimePickerDialog.OnTimeSetListener() {
@@ -293,31 +277,21 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                         mminute = minute;
                         calendar.set(mYear, mMonth, mDay, mhour, mminute);
                         String timeString =
-                                android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", calendar).toString();
+                                android.text.format.DateFormat.format("MM-dd hh:mm aa", calendar).toString();
                         mTimeDisplay.setText(timeString);
                     }
                 };
 
         @Override
         protected Dialog onCreateDialog(int id) {
-            switch (id) {
-                case DATE_DIALOG_ID:
-                    return new DatePickerDialog(this,
-                            mDateSetListener,
-                            mYear, mMonth, mDay);
-
-                case TIME_DIALOG_ID:
-                    return new TimePickerDialog(this,
-                            mTimeSetListener, mhour, mminute, false);
-
-            }
-            return null;
+            return new TimePickerDialog(this,
+                    mTimeSetListener, mhour, mminute, false);
         }
 
     private void pushToDataBase(String routeID, String meet_loc, GregorianCalendar meet_time) {
         Firebase ref = new Firebase(FIREBASE_URL);
         String timeString =
-                android.text.format.DateFormat.format("yyyy-MM-dd hh:mm", calendar).toString();
+                android.text.format.DateFormat.format("yyyy-MM-dd hh:mm aa", calendar).toString();
         String locString = meet_loc;
         ref.child("routes").child(routeID).child("Time").setValue(timeString);
         ref.child("routes").child(routeID).child("Location").setValue(locString);
