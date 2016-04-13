@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.BoringLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +20,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class ChecklistActivity extends AppCompatActivity {
 
@@ -220,6 +218,7 @@ public class ChecklistActivity extends AppCompatActivity {
                 //handle listview and assign adapter
                 studentListView = (ListView) findViewById(R.id.custom_list);
                 studentListView.setAdapter(adapter);
+                studentListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
             }
 

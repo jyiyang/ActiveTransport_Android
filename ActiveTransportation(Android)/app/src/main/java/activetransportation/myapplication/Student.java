@@ -25,4 +25,5 @@ public class Student {
     public void setIsArrived(boolean isArrived) { this.isArrived = isArrived; }
     public void setParentID(String parentID) { this.parentID = parentID; }
     public void setRouteID(String routeID) { this.routeID = routeID; }
+
 }
