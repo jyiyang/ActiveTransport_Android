@@ -40,6 +40,8 @@ public class NotifyActivity extends AppCompatActivity {
     private final Map<String, String> stuParentMap = new HashMap<String, String>();
     // Use a hashmap to store whether a student is present;
     private final Map<String, Boolean> stuArriveMap = new HashMap<String, Boolean>();
+    // Use a hashmap to store whether a student is present;
+    private final Map<String, String> stuNameMap = new HashMap<String, String>();
 
 
     /* Switch activities when click on tabs */
@@ -83,6 +85,7 @@ public class NotifyActivity extends AppCompatActivity {
                         final String sID = postSnapshot.getKey();
                         String parentID = (String) stuMap.get("parentID");
                         boolean isArrived = (boolean) stuMap.get("isArrived");
+                        String stuName = (String) stuMap.get("name");
 
                         // If the student-parent pair does not exist, add it into the map
                         if (!stuParentMap.containsKey(sID)) {
@@ -92,6 +95,11 @@ public class NotifyActivity extends AppCompatActivity {
                         if (!stuArriveMap.containsKey(sID)) {
                             stuArriveMap.put(sID, isArrived);
                         }
+                        // If the student-name pair does not exist, add it into the map
+                        if (!stuNameMap.containsKey(sID)) {
+                            stuNameMap.put(sID, stuName);
+                        }
+
 
                         System.out.print("Size of the student-parent map is ");
                         System.out.println(stuParentMap.size());
@@ -115,7 +123,7 @@ public class NotifyActivity extends AppCompatActivity {
                                         System.out.println("Find the same user, put phone # in");
                                         Map<String, Object> parMap = (Map<String, Object>) postSnapshot.getValue();
                                         String phoneNum = (String) parMap.get("contactInfo");
-                                        stuContactMap.put("sID", phoneNum);
+                                        stuContactMap.put(sID, phoneNum);
                                     }
                                 }
 
@@ -145,25 +153,70 @@ public class NotifyActivity extends AppCompatActivity {
     }
 
     public void textAllParents(View view) {
-        System.out.println("text parents");
-        System.out.println(stuContactMap.size());
-        String message;
+        String message = msg.getText().toString();;
         String phoneNum;
+        String stuName;
+
         for (String sID : stuContactMap.keySet()) {
-            message = msg.getText().toString();
             phoneNum = stuContactMap.get(sID);
-
-            try {
-                SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage(phoneNum, null, message, null, null);
-                Toast.makeText(getApplicationContext(), "SMS sent.", Toast.LENGTH_LONG).show();
-            }
-
-            catch (Exception e) {
-                Toast.makeText(getApplicationContext(), "SMS failed, please try again.", Toast.LENGTH_LONG).show();
-                e.printStackTrace();
-            }
+            stuName = stuNameMap.get(sID);
+            textMsg(phoneNum, message, stuName);
         }
     }
 
+    public void textArrivedParents(View view) {
+        String message = msg.getText().toString();
+        String phoneNum;
+        String stuName;
+        boolean textSent = false;
+
+        for (String sID : stuContactMap.keySet()) {
+            phoneNum = stuContactMap.get(sID);
+            stuName = stuNameMap.get(sID);
+            if (stuArriveMap.get(sID)) {
+                textMsg(phoneNum, message, stuName);
+                textSent = true;
+            }
+        }
+
+        if (!textSent) {
+            Toast.makeText(getApplicationContext(), "No student has been checked!", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    public void textNotArrivedParents(View view) {
+        String message = msg.getText().toString();
+        String phoneNum;
+        String stuName;
+        boolean textSent = false;
+
+        for (String sID : stuContactMap.keySet()) {
+            phoneNum = stuContactMap.get(sID);
+            stuName = stuNameMap.get(sID);
+            if (!stuArriveMap.get(sID)) {
+                textMsg(phoneNum, message, stuName);
+                textSent = true;
+            }
+        }
+
+        if (!textSent) {
+            Toast.makeText(getApplicationContext(), "All students have been checked!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // Helper function for texting a user
+    public void textMsg(String phoneNum, String message, String stuName) {
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNum, null, message, null, null);
+            String notifyMsg = "SMS sent to " + stuName + "'s parent";
+            Toast.makeText(getApplicationContext(), notifyMsg, Toast.LENGTH_LONG).show();
+        }
+
+        catch (Exception e) {
+            Toast.makeText(getApplicationContext(), "SMS failed, please try again.", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+        }
+    }
 }

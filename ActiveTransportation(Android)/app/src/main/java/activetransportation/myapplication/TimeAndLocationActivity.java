@@ -10,10 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.ExpandableListView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -23,14 +23,11 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -46,6 +43,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     private TextView routeView;
     private Set<Route> routeSet;
     private ArrayList<Route> routeList;
+    private boolean isStaff;
 
 
     private ExpandableListView timeandLocListView;
@@ -94,7 +92,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         Firebase.setAndroidContext(this);
 
         Intent intent = getIntent();
-        boolean isStaff = intent.getBooleanExtra(ChecklistActivity.ISSTAFF, false);
+        isStaff = intent.getBooleanExtra(ChecklistActivity.ISSTAFF, false);
         if (isStaff) {
             setContentView(R.layout.activity_time_and_location_staff);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
