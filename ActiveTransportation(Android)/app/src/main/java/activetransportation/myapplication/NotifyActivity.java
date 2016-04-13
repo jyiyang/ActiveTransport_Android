@@ -17,6 +17,8 @@ import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,6 +73,16 @@ public class NotifyActivity extends AppCompatActivity {
         Intent intent = getIntent();
         ArrayList<String> stuIDs = intent.getStringArrayListExtra(ChecklistActivity.STUIDS);
 
+        // Time activity
+        GregorianCalendar time = new GregorianCalendar();
+        if (time.get(Calendar.AM_PM) == 1) {
+            final String timeOfDay = "afternoon";
+        }
+        final String timeOfDay = "morning";
+
+        final String timeString =
+                android.text.format.DateFormat.format("yyyy-MM-dd", time).toString();
+
         // Database reference
         final Firebase ref = new Firebase(FIREBASE_URL);
 
@@ -84,17 +96,13 @@ public class NotifyActivity extends AppCompatActivity {
                         Map<String, Object> stuMap = (Map<String, Object>) postSnapshot.getValue();
                         final String sID = postSnapshot.getKey();
                         String parentID = (String) stuMap.get("parentID");
-                        boolean isArrived = (boolean) stuMap.get("isArrived");
                         String stuName = (String) stuMap.get("name");
 
                         // If the student-parent pair does not exist, add it into the map
                         if (!stuParentMap.containsKey(sID)) {
                             stuParentMap.put(sID, parentID);
                         }
-                        // If the student-arrived pair does not exist, add it into the map
-                        if (!stuArriveMap.containsKey(sID)) {
-                            stuArriveMap.put(sID, isArrived);
-                        }
+
                         // If the student-name pair does not exist, add it into the map
                         if (!stuNameMap.containsKey(sID)) {
                             stuNameMap.put(sID, stuName);
@@ -115,10 +123,7 @@ public class NotifyActivity extends AppCompatActivity {
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                                     String uID = postSnapshot.getKey();
-//                                    System.out.println(stuParentMap.size());
-//                                    System.out.println("The user IDs are ");
-//                                    System.out.println("fr cur database: " + uID);
-//                                    System.out.println("from parent map: " + stuParentMap.get(sID));
+
                                     if (uID.equals(stuParentMap.get(sID))) {
                                         System.out.println("Find the same user, put phone # in");
                                         Map<String, Object> parMap = (Map<String, Object>) postSnapshot.getValue();
@@ -127,9 +132,32 @@ public class NotifyActivity extends AppCompatActivity {
                                     }
                                 }
 
+                                ref.child("logs").addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        boolean logArrived;
+                                        if (dataSnapshot.child(timeString).child(timeOfDay).hasChild(sID)) {
+                                            logArrived = (Boolean) dataSnapshot.child(timeString).child(timeOfDay).child(sID).getValue();
+                                            // If the student-arrived pair does not exist, add it into the map
+                                            if (!stuArriveMap.containsKey(sID)) {
+                                                stuArriveMap.put(sID, logArrived);
+                                            }
+                                        }
+                                        else {
+                                            System.out.println("System log does not exist for this student!");
+                                        }
+                                        msg = (EditText) findViewById(R.id.msg_content);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(FirebaseError firebaseError) {
+                                        System.out.println("The read failed: " + firebaseError.getMessage());
+                                    }
+                                });
+
 //                                System.out.print("Size of the student-contact map is ");
 //                                System.out.println(stuContactMap.size());
-                                msg = (EditText) findViewById(R.id.msg_content);
+
                             }
 
                             @Override
@@ -137,8 +165,6 @@ public class NotifyActivity extends AppCompatActivity {
                                 System.out.println("The read failed: " + firebaseError.getMessage());
                             }
                         });
-
-
                     }
                     }
 
@@ -147,8 +173,6 @@ public class NotifyActivity extends AppCompatActivity {
                     System.out.println("The read failed: " + firebaseError.getMessage());
                 }
             });
-
-
         }
     }
 
@@ -172,8 +196,8 @@ public class NotifyActivity extends AppCompatActivity {
 
         for (String sID : stuContactMap.keySet()) {
             phoneNum = stuContactMap.get(sID);
-            stuName = stuNameMap.get(sID);
             if (stuArriveMap.get(sID)) {
+                stuName = stuNameMap.get(sID);
                 textMsg(phoneNum, message, stuName);
                 textSent = true;
             }
@@ -193,13 +217,12 @@ public class NotifyActivity extends AppCompatActivity {
 
         for (String sID : stuContactMap.keySet()) {
             phoneNum = stuContactMap.get(sID);
-            stuName = stuNameMap.get(sID);
             if (!stuArriveMap.get(sID)) {
+                stuName = stuNameMap.get(sID);
                 textMsg(phoneNum, message, stuName);
                 textSent = true;
             }
         }
-
         if (!textSent) {
             Toast.makeText(getApplicationContext(), "All students have been checked!", Toast.LENGTH_LONG).show();
         }
