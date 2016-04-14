@@ -20,9 +20,7 @@ import com.firebase.client.FirebaseError;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by KritiKAl on 3/30/2016.
- */
+
 public class RegisterActivity extends AppCompatActivity {
     private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
     private EditText mFirstNameView;
@@ -198,6 +196,7 @@ public class RegisterActivity extends AppCompatActivity {
         userMap.put("isStaff", user.getIsStaff());
         userMap.put("email", user.getEmail());
         userMap.put("contactInfo", user.getContactInfo());
+        userMap.put("uid", user.getUserID());
         Firebase stfRef = usersRef.child(user.getUserID());
         stfRef.setValue(userMap);
         user.setUserID(stfRef.getKey());
