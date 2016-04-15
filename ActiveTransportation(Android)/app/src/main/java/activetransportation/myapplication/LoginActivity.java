@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -27,6 +28,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
@@ -62,6 +64,34 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    private class LoginResults {
+        private Boolean authSuccess;
+        private FirebaseError loginError;
+        public LoginResults (FirebaseError error, Boolean success) {
+             this.authSuccess = success;
+             this.loginError = error;
+        }
+        public void setError(FirebaseError error) {
+            this.loginError = error;
+        }
+
+        public void setAuthSuccess(Boolean success) {
+            this.authSuccess = success;
+        }
+        public Boolean getAuthSuccess() {
+            return this.authSuccess;
+        }
+        public int getErrorCode() {
+            return this.loginError.getCode();
+        }
+        public FirebaseError getError() {
+            return this.loginError;
+        }
+    }
+    private LoginResults loginResults = new LoginResults(FirebaseError.fromCode(FirebaseError.UNKNOWN_ERROR),false);
+
+
 
     public void putUser(User user, Firebase usersRef) {
         Map<String, Object> userMap = new HashMap<String, Object>();
@@ -322,34 +352,36 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, LoginResults> {
 
         private final String mEmail;
         private final String mPassword;
+
+
 
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
         }
 
+
         @Override
-        protected Boolean doInBackground(Void... params) {
+        protected LoginResults doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
             try {
                 // Simulate network access.
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                return false;
+                return loginResults;
             }
-
-
             Firebase ref = new Firebase(FIREBASE_URL);
 
             ref.authWithPassword(mEmail, mPassword, new Firebase.AuthResultHandler() {
 
                 @Override
                 public void onAuthenticated(AuthData authData) {
+
                     // the following code is commented since we only put data into Firebase once
 //                    authData.getUid();
 //                    Firebase ref = new Firebase(FIREBASE_URL);
@@ -361,6 +393,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 //                    putUser(parent, usersRef);
 
                     System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
+                    loginResults.setAuthSuccess(true);
                     //userID = authData.getUid();
                 }
 
@@ -368,6 +401,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
                     // there was an error
+                    loginResults.setAuthSuccess(false);
+                    loginResults.setError(firebaseError);
+                    System.out.println(loginResults.getAuthSuccess());
                 }
             });
 
@@ -386,35 +422,76 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             //Users.put("User0", User0);
             //loginInfo.setValue(Users);
 
-            ref.createUser(mEmail, mPassword, new Firebase.ValueResultHandler<Map<String, Object>>() {
-                @Override
-                public void onSuccess(Map<String, Object> result) {
-                    System.out.println("Successfully created user account with uid: " + result.get("uid"));
-                }
-
-                @Override
-                public void onError(FirebaseError firebaseError) {
-                    // there was an error
-                }
-            });
+//            ref.createUser(mEmail, mPassword, new Firebase.ValueResultHandler<Map<String, Object>>() {
+//                @Override
+//                public void onSuccess(Map<String, Object> result) {
+//                    System.out.println("Successfully created user account with uid: " + result.get("uid"));
+//                }
+//
+//                @Override
+//                public void onError(FirebaseError firebaseError) {
+//                    // there was an error
+//                }
+//            });
             // TODO: Multiple users and password encryption
-            return true;
+            try {
+                // Simulate network access.
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                return loginResults;
+            }
+            System.out.println(loginResults.getError()+"out2");
+            return loginResults;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final LoginResults loginResults) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
+            if (loginResults.getAuthSuccess()) {
                 finish();
                 Intent myIntent = new Intent(LoginActivity.this, ChecklistActivity.class);
                 myIntent.putExtra(CHECKLIST, mEmail);
                 //System.out.println(mEmail);
+                System.out.println(loginResults.getError()+"post execute");
                 LoginActivity.this.startActivity(myIntent);
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                switch (loginResults.loginError.getCode()) {
+                    case FirebaseError.USER_DOES_NOT_EXIST: {
+                        mEmailView.setError("User does not exist");
+                        mEmailView.requestFocus();
+                        break;
+                    }
+                    case FirebaseError.INVALID_PASSWORD: {
+                        mPasswordView.setError(getString(R.string.error_incorrect_password));
+                        mPasswordView.requestFocus();
+                        break;
+                    }
+                    case FirebaseError.INVALID_EMAIL: {
+                        mEmailView.setError("Please input a valid email");
+                        mEmailView.requestFocus();
+                        break;
+                    }
+                    case FirebaseError.NETWORK_ERROR:{
+                        Context context = getApplicationContext();
+                        CharSequence text = "Network error, try again later";
+                        int duration = Toast.LENGTH_SHORT;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        break;
+                    }
+                    default: {
+                        Context context = getApplicationContext();
+                        CharSequence text = loginResults.loginError.toString();
+                        int duration = Toast.LENGTH_SHORT;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                        break;
+                    }
+                }
             }
         }
 
