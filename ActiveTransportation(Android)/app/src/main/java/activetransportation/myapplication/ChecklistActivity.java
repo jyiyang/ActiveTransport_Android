@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.firebase.client.DataSnapshot;
@@ -31,6 +33,9 @@ public class ChecklistActivity extends AppCompatActivity {
     public final static String STUIDS = "ActiveTransport.STUIDS";
     public final static String ROUTEID = "ActiveTransport.ROUTEID";
     public final static String ISSTAFF = "ActiveTransport.ISSTAFF";
+    public final static String OLDPASSWORD = "ActiveTransport.OLDPASSWORD";
+    public final static String USERID = "ActiveTransport.USERID";
+    public final static String OLDEMAIL = "ActiveTransport.OLDEMAIL";
 
     //generate list
     private ArrayList<Student> studentList;
@@ -43,6 +48,8 @@ public class ChecklistActivity extends AppCompatActivity {
     private String userEmail;
     private Boolean logArrived = false;
     private String timeOfDay;
+    private String password;
+
 
 
     /* Switch activities when click on tabs */
@@ -87,6 +94,7 @@ public class ChecklistActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         userEmail = intent.getStringExtra(LoginActivity.CHECKLIST);
+        password = intent.getStringExtra(LoginActivity.PASSWORD);
 
         //System.out.println(userEmail);
         Firebase ref = new Firebase(FIREBASE_URL);
@@ -255,7 +263,8 @@ public class ChecklistActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_checklist, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_checklist, menu);
         return true;
     }
 
@@ -268,7 +277,11 @@ public class ChecklistActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            return true;
+            Intent intent = new Intent(this, SettingsActivity.class);
+            intent.putExtra(OLDPASSWORD, password);
+            intent.putExtra(OLDEMAIL,userEmail);
+            intent.putExtra(USERID, userID_);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

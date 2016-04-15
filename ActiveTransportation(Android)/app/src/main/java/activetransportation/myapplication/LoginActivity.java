@@ -51,6 +51,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      */
     private static final int REQUEST_READ_CONTACTS = 0;
     public final static String CHECKLIST = "ActiveTransport.CHECKLIST";
+    public final static String PASSWORD = "ActiveTransport.PASSWORD";
     private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
     //private String userID;
 
@@ -403,7 +404,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     // there was an error
                     loginResults.setAuthSuccess(false);
                     loginResults.setError(firebaseError);
-                    System.out.println(loginResults.getAuthSuccess());
                 }
             });
 
@@ -440,7 +440,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } catch (InterruptedException e) {
                 return loginResults;
             }
-            System.out.println(loginResults.getError()+"out2");
             return loginResults;
         }
 
@@ -453,8 +452,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 finish();
                 Intent myIntent = new Intent(LoginActivity.this, ChecklistActivity.class);
                 myIntent.putExtra(CHECKLIST, mEmail);
+                myIntent.putExtra(PASSWORD, mPassword);
                 //System.out.println(mEmail);
-                System.out.println(loginResults.getError()+"post execute");
                 LoginActivity.this.startActivity(myIntent);
             } else {
                 switch (loginResults.loginError.getCode()) {
