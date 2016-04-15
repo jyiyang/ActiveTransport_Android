@@ -42,6 +42,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     private Set<Route> routeSet;
     private ArrayList<Route> routeList;
     private boolean isStaff;
+    private ArrayList<String> stuIDs;
 
 
     private ExpandableListView timeandLocListView;
@@ -71,6 +72,9 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
         Intent intent = new Intent(this, ChecklistActivity.class);
+        intent.putExtra(ChecklistActivity.ROUTEID, routeID_);
+        intent.putExtra(ChecklistActivity.STUIDS, stuIDs);
+        intent.putExtra(ChecklistActivity.ISSTAFF, isStaff);
         startActivity(intent);
     }
 
@@ -81,6 +85,9 @@ public class TimeAndLocationActivity extends AppCompatActivity {
 
     public void switchNotify(View view) {
         Intent intent = new Intent(this, NotifyActivity.class);
+        intent.putExtra(ChecklistActivity.ROUTEID, routeID_);
+        intent.putExtra(ChecklistActivity.STUIDS, stuIDs);
+        intent.putExtra(ChecklistActivity.ISSTAFF, isStaff);
         startActivity(intent);
     }
 
@@ -91,6 +98,8 @@ public class TimeAndLocationActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         isStaff = intent.getBooleanExtra(ChecklistActivity.ISSTAFF, false);
+        routeID_ = intent.getStringExtra(ChecklistActivity.ROUTEID);
+        stuIDs = intent.getStringArrayListExtra(ChecklistActivity.STUIDS);
         if (isStaff) {
             setContentView(R.layout.activity_time_and_location_staff);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -107,7 +116,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     }
 
     private void setParent(Intent intent) {
-        ArrayList<String> stuIDs = intent.getStringArrayListExtra(ChecklistActivity.STUIDS);
+        stuIDs = intent.getStringArrayListExtra(ChecklistActivity.STUIDS);
         // Get the user identity to find out if the current user is a staff
 //        final boolean isStaff = intent.getExtras().getBoolean(ChecklistActivity.ISSTAFF);
 

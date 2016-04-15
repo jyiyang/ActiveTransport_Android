@@ -66,12 +66,13 @@ public class ChecklistActivity extends AppCompatActivity {
 
     public void switchNotify(View view) {
         Intent intent = new Intent(this, NotifyActivity.class);
+        intent.putExtra(ROUTEID, routeID_);
+        intent.putExtra(STUIDS, stuIDList);
         if (isStaff_) {
-            intent.putExtra(ROUTEID, routeID_);
-            intent.putExtra(STUIDS, stuIDList);
+            intent.putExtra(ISSTAFF, true);
         }
         else {
-            // Do nothing if not a staff
+            intent.putExtra(ISSTAFF, false);
         }
         startActivity(intent);
     }

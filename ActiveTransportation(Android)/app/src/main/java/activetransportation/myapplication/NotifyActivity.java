@@ -28,6 +28,12 @@ public class NotifyActivity extends AppCompatActivity {
     private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
     // Class attributes
     private ArrayList<String> studentID;
+    private String timeOfDay;
+
+    // For changing activities
+    private boolean isStaff;
+    private ArrayList<String> stuIDs;
+    private String routeID;
 
     // View attributes
     private Button sendTextAll;
@@ -48,12 +54,19 @@ public class NotifyActivity extends AppCompatActivity {
 
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
+
         Intent intent = new Intent(this, ChecklistActivity.class);
+        intent.putExtra(ChecklistActivity.ROUTEID, routeID);
+        intent.putExtra(ChecklistActivity.STUIDS, stuIDs);
+        intent.putExtra(ChecklistActivity.ISSTAFF, isStaff);
         startActivity(intent);
     }
 
     public void switchTimeAndLoc(View view) {
         Intent intent = new Intent(this, TimeAndLocationActivity.class);
+        intent.putExtra(ChecklistActivity.ROUTEID, routeID);
+        intent.putExtra(ChecklistActivity.STUIDS, stuIDs);
+        intent.putExtra(ChecklistActivity.ISSTAFF, isStaff);
         startActivity(intent);
     }
 
@@ -61,6 +74,7 @@ public class NotifyActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NotifyActivity.class);
         startActivity(intent);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,14 +85,18 @@ public class NotifyActivity extends AppCompatActivity {
 
         // Get intents from main checklist activity
         Intent intent = getIntent();
-        ArrayList<String> stuIDs = intent.getStringArrayListExtra(ChecklistActivity.STUIDS);
+        stuIDs = intent.getStringArrayListExtra(ChecklistActivity.STUIDS);
+        isStaff = intent.getExtras().getBoolean(ChecklistActivity.ISSTAFF);
+        routeID = intent.getExtras().getString(ChecklistActivity.ROUTEID);
 
         // Time activity
         GregorianCalendar time = new GregorianCalendar();
         if (time.get(Calendar.AM_PM) == 1) {
-            final String timeOfDay = "afternoon";
+            timeOfDay = "afternoon";
         }
-        final String timeOfDay = "morning";
+        else {
+            timeOfDay = "morning";
+        }
 
         final String timeString =
                 android.text.format.DateFormat.format("yyyy-MM-dd", time).toString();
