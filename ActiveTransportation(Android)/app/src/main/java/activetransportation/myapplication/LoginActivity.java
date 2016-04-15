@@ -255,7 +255,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() >= 0;
     }
 
     /**
@@ -369,12 +369,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected LoginResults doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-            try {
+            //try {
                 // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return loginResults;
-            }
+            //    Thread.sleep(2000);
+            //} catch (InterruptedException e) {
+            //    return loginResults;
+            //}
             Firebase ref = new Firebase(FIREBASE_URL);
 
             ref.authWithPassword(mEmail, mPassword, new Firebase.AuthResultHandler() {
