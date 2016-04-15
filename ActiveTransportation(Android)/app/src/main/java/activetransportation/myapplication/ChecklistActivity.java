@@ -92,13 +92,8 @@ public class ChecklistActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
-        setContentView(R.layout.activity_checklist);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
 
         Intent intent = getIntent();
-
         userEmail = intent.getStringExtra(LoginActivity.CHECKLIST);
 
         //System.out.println(userEmail);
@@ -124,8 +119,14 @@ public class ChecklistActivity extends AppCompatActivity {
                     Map<String, Object> userMap = (Map<String, Object>) postSnapshot.getValue();
                     isStaff_ = (Boolean) userMap.get("isStaff");
                     if (isStaff_) {
+                        setContentView(R.layout.activity_checklist);
+                        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+                        setSupportActionBar(toolbar);
                         routeID_ = (String) userMap.get("routeID");
                     } else {
+                        setContentView(R.layout.activity_checklist_parent);
+                        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
+                        setSupportActionBar(toolbar);
                         childrenIDs_ = new ArrayList<String>(((Map<String, Object>) userMap.get("childrenIDs")).keySet());
                     }
                     userID_ = key;
