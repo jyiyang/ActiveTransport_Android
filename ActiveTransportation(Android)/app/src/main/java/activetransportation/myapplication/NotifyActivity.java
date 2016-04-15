@@ -255,7 +255,7 @@ public class NotifyActivity extends AppCompatActivity {
         }
 
         catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "SMS failed, please try again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Please enter your message and try again.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }
