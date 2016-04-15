@@ -56,15 +56,14 @@ public class NotifyActivity extends AppCompatActivity {
     public void switchChecklist(View view) {
 
         Intent intent = new Intent(this, ChecklistActivity.class);
-        intent.putExtra(ChecklistActivity.ROUTEID, routeID);
-        intent.putExtra(ChecklistActivity.STUIDS, stuIDs);
-        intent.putExtra(ChecklistActivity.ISSTAFF, isStaff);
         startActivity(intent);
     }
 
     public void switchTimeAndLoc(View view) {
         Intent intent = new Intent(this, TimeAndLocationActivity.class);
-        intent.putExtra(ChecklistActivity.ROUTEID, routeID);
+        if (isStaff) {
+            intent.putExtra(ChecklistActivity.ROUTEID, routeID);
+        }
         intent.putExtra(ChecklistActivity.STUIDS, stuIDs);
         intent.putExtra(ChecklistActivity.ISSTAFF, isStaff);
         startActivity(intent);
@@ -256,7 +255,7 @@ public class NotifyActivity extends AppCompatActivity {
         }
 
         catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "SMS failed, please try again.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Please enter your message and try again.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
     }

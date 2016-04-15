@@ -54,12 +54,9 @@ public class ChecklistActivity extends AppCompatActivity {
     public void switchTimeAndLoc(View view) {
         Intent intent = new Intent(this, TimeAndLocationActivity.class);
         intent.putExtra(STUIDS, stuIDList);
-
+        intent.putExtra(ISSTAFF, isStaff_);
         if (isStaff_) {
             intent.putExtra(ROUTEID, routeID_);
-            intent.putExtra(ISSTAFF, true);
-        } else {
-            intent.putExtra(ISSTAFF, false);
         }
         startActivity(intent);
     }
@@ -68,12 +65,7 @@ public class ChecklistActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NotifyActivity.class);
         intent.putExtra(ROUTEID, routeID_);
         intent.putExtra(STUIDS, stuIDList);
-        if (isStaff_) {
-            intent.putExtra(ISSTAFF, true);
-        }
-        else {
-            intent.putExtra(ISSTAFF, false);
-        }
+        intent.putExtra(ISSTAFF, isStaff_);
         startActivity(intent);
     }
 
