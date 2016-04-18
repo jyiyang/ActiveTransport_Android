@@ -72,12 +72,6 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
         Intent intent = new Intent(this, ChecklistActivity.class);
-        if (isStaff) {
-            intent.putExtra(ChecklistActivity.ROUTEID, routeID_);
-        }
-
-        intent.putExtra(ChecklistActivity.STUIDS, stuIDs);
-        intent.putExtra(ChecklistActivity.ISSTAFF, isStaff);
         startActivity(intent);
     }
 
