@@ -17,15 +17,18 @@ import com.firebase.client.ValueEventListener;
 public class ContactInfoActivity extends AppCompatActivity {
 
     private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
-    //private TextView nameView;
+    // private TextView nameView;
     private TextView userView;
     private TextView phoneView;
 
-    //private String name;
+    // private String name;
     private String userName;
     private String userContactInfo;
     private String staffID;
     private Boolean isStaff;
+
+    // private
+    
 
     public void switchChecklist(View view) {
         finish();
