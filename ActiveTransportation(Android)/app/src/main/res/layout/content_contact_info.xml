@@ -13,14 +13,27 @@
     tools:showIn="@layout/activity_contact_info"
     android:id="@+id/content">
 
-
     <TextView
         android:id="@+id/parent_name"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:textColor="@color/text_color_default"
-        android:textSize="16dp" />
+        android:textSize="50dp"
+        android:text="FUCKK"/>
+
+    <ListView
+        android:id="@+id/contact_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:choiceMode="multipleChoice"
+        android:listSelector="@drawable/list_color_selector"
+        android:layout_below="@+id/parent_name"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:paddingTop="10dp">
+    </ListView>
+
 
     <TextView
         android:id="@+id/phone_num"
@@ -44,4 +57,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:onClick="switchChecklist"/>
+
+
 </RelativeLayout>

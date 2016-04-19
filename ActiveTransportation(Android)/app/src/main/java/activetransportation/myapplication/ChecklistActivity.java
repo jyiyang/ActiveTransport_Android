@@ -145,7 +145,6 @@ public class ChecklistActivity extends AppCompatActivity {
     private void createList(Boolean isStaff, Object maybeRouteID, Object maybeChildrenIDs, final String userID) {
 
         Firebase ref = new Firebase(FIREBASE_URL);
-
         if (isStaff) {
             String routeID = (String) maybeRouteID;
             ref.child("routes").child(routeID).child("students").addListenerForSingleValueEvent(new ValueEventListener() {

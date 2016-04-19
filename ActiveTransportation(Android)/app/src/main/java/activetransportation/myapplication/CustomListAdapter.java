@@ -165,4 +165,3 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
         });
     }
 }
-
