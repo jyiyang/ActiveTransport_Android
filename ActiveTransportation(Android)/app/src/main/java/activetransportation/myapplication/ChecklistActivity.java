@@ -226,7 +226,7 @@ public class ChecklistActivity extends AppCompatActivity {
         GregorianCalendar time = new GregorianCalendar();
         final String id = studentID;
 
-        if (time.get(Calendar.AM_PM) == 1) {
+        if (time.get(Calendar.AM_PM) == Calendar.PM) {
             timeOfDay = "afternoon";
         } else {
             timeOfDay = "morning";

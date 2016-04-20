@@ -90,7 +90,7 @@ public class NotifyActivity extends AppCompatActivity {
 
         // Time activity
         GregorianCalendar time = new GregorianCalendar();
-        if (time.get(Calendar.AM_PM) == 1) {
+        if (time.get(Calendar.AM_PM) == Calendar.PM) {
             timeOfDay = "afternoon";
         }
         else {
