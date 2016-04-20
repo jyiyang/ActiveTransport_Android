@@ -25,7 +25,6 @@ import java.util.Map;
 public class ChecklistActivity extends AppCompatActivity {
 
     private ListView studentListView;
-    //private ArrayAdapter arrayAdapter;
     private CustomListAdapter adapter;
 
     private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
@@ -36,7 +35,6 @@ public class ChecklistActivity extends AppCompatActivity {
     public final static String USERID = "ActiveTransport.USERID";
     public final static String OLDEMAIL = "ActiveTransport.OLDEMAIL";
 
-    //generate list
     private ArrayList<Student> studentList;
     private ArrayList<String> stuIDList;
     private Boolean isStaff_;
@@ -47,9 +45,6 @@ public class ChecklistActivity extends AppCompatActivity {
     private Boolean logArrived = false;
     private String timeOfDay;
     private String password;
-    private String oldPassword;
-    private Boolean logChanged;
-    private String oldEmail;
 
 
     /* Switch activities when click on tabs. */
@@ -274,8 +269,7 @@ public class ChecklistActivity extends AppCompatActivity {
          * as you specify a parent activity in AndroidManifest.xml.
          */
         int id = item.getItemId();
-
-        /* noinspection SimplifiableIfStatement */
+        
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             intent.putExtra(OLDPASSWORD, password);
