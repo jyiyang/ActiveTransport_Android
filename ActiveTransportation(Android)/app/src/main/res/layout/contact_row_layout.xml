@@ -12,7 +12,7 @@
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:textColor="@color/text_color_default"
-        android:textSize="20dp" />
+        android:textSize="16dp" />
 
     <ImageView
         android:id="@+id/left_btn"

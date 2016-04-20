@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
 
 /**
  * Created by KritiKAl on 4/15/2016.
@@ -548,6 +547,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() >= 0;
     }
 }
