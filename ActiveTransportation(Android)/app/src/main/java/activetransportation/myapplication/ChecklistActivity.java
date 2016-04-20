@@ -49,6 +49,9 @@ public class ChecklistActivity extends AppCompatActivity {
     private Boolean logArrived = false;
     private String timeOfDay;
     private String password;
+    private String oldPassword;
+    private Boolean logChanged;
+    private String oldEmail;
 
 
 
@@ -281,6 +284,7 @@ public class ChecklistActivity extends AppCompatActivity {
             intent.putExtra(OLDEMAIL,userEmail);
             intent.putExtra(USERID, userID_);
             startActivity(intent);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);

@@ -10,4 +10,5 @@
     <color name="list_row_pressed_bg">#008cef</color>
     <color name="list_row_checked_bg">#86d3f6</color>
     <color name="list_row_selected_bg">#86d3f6</color>
+    <color name="button_text_normal">#000000</color>
 </resources>
