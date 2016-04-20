@@ -20,7 +20,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 /**
- * Created by KritiKAl on 4/15/2016.
+ * Created by Yiqing Cai on 4/15/2016.
  */
 public class SettingsActivity extends AppCompatActivity {
 
