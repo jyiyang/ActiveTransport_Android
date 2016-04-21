@@ -2,6 +2,7 @@ package activetransportation.myapplication;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -76,6 +78,14 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
+//Keep pop up dialog alive after rotation.
+    private static void doKeepDialog(Dialog dialog){
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(lp);
+    }
 
     private void changePhoneNumber(Intent intent) {
         Firebase ref = new Firebase(FIREBASE_URL);
@@ -114,6 +124,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // show it
         alertDialog.show();
+        doKeepDialog(alertDialog);
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -154,6 +165,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         mEmailInput = (EditText) promptsView.findViewById(R.id.change_email_input);
         mOldPasswordInput = (EditText) promptsView.findViewById(R.id.old_password_input);
+        mOldPasswordInput.requestFocus();
         mEmailInput.setError(null);
         mOldPasswordInput.setError(null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
@@ -183,6 +195,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // show it
         alertDialog.show();
+        doKeepDialog(alertDialog);
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -302,6 +315,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         // show it
         alertDialog.show();
+        doKeepDialog(alertDialog);
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

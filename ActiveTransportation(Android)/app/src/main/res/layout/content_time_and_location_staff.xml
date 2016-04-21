@@ -49,38 +49,38 @@
         android:layout_alignParentStart="true"
         android:layout_marginTop="22dp" />
 
-    <EditText
-        android:id="@+id/input_location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Set Location"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:layout_marginTop="93dp"
-        android:layout_below="@+id/meeting_time_staff"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+    <!--<EditText-->
+        <!--android:id="@+id/input_location"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:hint="Set Location"-->
+        <!--android:maxLines="1"-->
+        <!--android:singleLine="true"-->
+        <!--android:layout_marginTop="93dp"-->
+        <!--android:layout_below="@+id/meeting_time_staff"-->
+        <!--android:layout_alignParentLeft="true"-->
+        <!--android:layout_alignParentStart="true" />-->
 
 
-    <Button
-        android:id="@+id/set_time"
-        style="?android:textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Set Time"
-        android:textStyle="bold"
-        android:layout_below="@+id/input_location"
-        android:layout_alignRight="@+id/meeting_location_staff"
-        android:layout_alignEnd="@+id/meeting_location_staff" />
+    <!--<Button-->
+        <!--android:id="@+id/set_time"-->
+        <!--style="?android:textAppearanceSmall"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Set Time"-->
+        <!--android:textStyle="bold"-->
+        <!--android:layout_below="@+id/input_location"-->
+        <!--android:layout_alignRight="@+id/meeting_location_staff"-->
+        <!--android:layout_alignEnd="@+id/meeting_location_staff" />-->
 
-    <Button
-        android:id="@+id/set_location"
-        style="?android:textAppearanceSmall"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Save All"
-        android:textStyle="bold"
-        android:layout_below="@+id/set_time" />
+    <!--<Button-->
+        <!--android:id="@+id/set_location"-->
+        <!--style="?android:textAppearanceSmall"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Save All"-->
+        <!--android:textStyle="bold"-->
+        <!--android:layout_below="@+id/set_time" />-->
 
     <LinearLayout
         android:layout_width="match_parent"

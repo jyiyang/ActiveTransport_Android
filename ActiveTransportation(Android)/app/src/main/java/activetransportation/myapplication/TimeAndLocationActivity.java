@@ -198,10 +198,10 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         routeID_ = intent.getStringExtra(ChecklistActivity.ROUTEID);
         Firebase ref = new Firebase(FIREBASE_URL);
 
-        mPickTime =(Button)findViewById(R.id.set_time);
+//        mPickTime =(Button)findViewById(R.id.set_time);
         mTimeDisplay = (TextView) findViewById(R.id.meeting_time_staff);
-        mMeetLocation = (EditText) findViewById(R.id.input_location);
-        mSetLocation = (Button) findViewById(R.id.set_location);
+//        mMeetLocation = (EditText) findViewById(R.id.input_location);
+//        mSetLocation = (Button) findViewById(R.id.set_location);
         mLocationDisplay = (TextView) findViewById(R.id.meeting_location_staff);
         mRouteName = (TextView) findViewById(R.id.route_name_staff);
 
@@ -213,9 +213,9 @@ public class TimeAndLocationActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 String DefaultLocation = snapshot.getValue().toString();
-                System.out.println(DefaultLocation);
-                mMeetLocation.setText(DefaultLocation);
-                mMeetLocation.setTextColor(Color.parseColor("#a9a9a9"));
+//                System.out.println(DefaultLocation);
+//                mMeetLocation.setText(DefaultLocation);
+//                mMeetLocation.setTextColor(Color.parseColor("#a9a9a9"));
                 mLocationDisplay.setText(DefaultLocation);
             }
 
@@ -238,64 +238,64 @@ public class TimeAndLocationActivity extends AppCompatActivity {
             }
         });
 
-        mSetLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mMeetLocation.setError(null);
-                View focusView = null;
-                boolean cancel = false;
-                meetLocation = mMeetLocation.getText().toString();
-
-                if(TextUtils.isEmpty(meetLocation)) {
-                    mMeetLocation.setError("Please enter the meeting location");
-                    focusView = mMeetLocation;
-                    cancel = true;
-                }
-                if (cancel) {
-                    focusView.requestFocus();
-                } else {
-                    mLocationDisplay.setText(meetLocation);
-                    pushToDataBase(routeID_, meetLocation, calendar);
-                }
-            }
-        });
+//        mSetLocation.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                mMeetLocation.setError(null);
+//                View focusView = null;
+//                boolean cancel = false;
+//                meetLocation = mMeetLocation.getText().toString();
+//
+//                if(TextUtils.isEmpty(meetLocation)) {
+//                    mMeetLocation.setError("Please enter the meeting location");
+//                    focusView = mMeetLocation;
+//                    cancel = true;
+//                }
+//                if (cancel) {
+//                    focusView.requestFocus();
+//                } else {
+//                    mLocationDisplay.setText(meetLocation);
+//                    pushToDataBase(routeID_, meetLocation, calendar);
+//                }
+//            }
+//        });
 
 
         //Pick time's click event listener
-        mPickTime.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showDialog(DATE_DIALOG_ID);
-            }
-        });
+//        mPickTime.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                showDialog(DATE_DIALOG_ID);
+//            }
+//        });
 
     }
 
-        // Timepicker dialog generation
-        private TimePickerDialog.OnTimeSetListener mTimeSetListener =
-                new TimePickerDialog.OnTimeSetListener() {
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        mhour = hourOfDay;
-                        mminute = minute;
-                        calendar.set(mYear, mMonth, mDay, mhour, mminute);
-                        String timeString =
-                                android.text.format.DateFormat.format("MM-dd hh:mm aa", calendar).toString();
-                        mTimeDisplay.setText(timeString);
-                    }
-                };
-
-        @Override
-        protected Dialog onCreateDialog(int id) {
-            return new TimePickerDialog(this,
-                    mTimeSetListener, mhour, mminute, false);
-        }
-
-    private void pushToDataBase(String routeID, String meet_loc, GregorianCalendar meet_time) {
-        Firebase ref = new Firebase(FIREBASE_URL);
-        String timeString =
-                android.text.format.DateFormat.format("yyyy-MM-dd hh:mm aa", calendar).toString();
-        String locString = meet_loc;
-        ref.child("routes").child(routeID).child("meetingTime").setValue(timeString);
-        ref.child("routes").child(routeID).child("meetingLocation").setValue(locString);
-    }
+//        // Timepicker dialog generation
+//        private TimePickerDialog.OnTimeSetListener mTimeSetListener =
+//                new TimePickerDialog.OnTimeSetListener() {
+//                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+//                        mhour = hourOfDay;
+//                        mminute = minute;
+//                        calendar.set(mYear, mMonth, mDay, mhour, mminute);
+//                        String timeString =
+//                                android.text.format.DateFormat.format("MM-dd hh:mm aa", calendar).toString();
+//                        mTimeDisplay.setText(timeString);
+//                    }
+//                };
+//
+//        @Override
+//        protected Dialog onCreateDialog(int id) {
+//            return new TimePickerDialog(this,
+//                    mTimeSetListener, mhour, mminute, false);
+//        }
+//
+//    private void pushToDataBase(String routeID, String meet_loc, GregorianCalendar meet_time) {
+//        Firebase ref = new Firebase(FIREBASE_URL);
+//        String timeString =
+//                android.text.format.DateFormat.format("yyyy-MM-dd hh:mm aa", calendar).toString();
+//        String locString = meet_loc;
+//        ref.child("routes").child(routeID).child("meetingTime").setValue(timeString);
+//        ref.child("routes").child(routeID).child("meetingLocation").setValue(locString);
+//    }
 }
