@@ -37,6 +37,11 @@ public class SettingsActivity extends AppCompatActivity {
     private final Context context = this;
     private EditText mPhoneInput;
     private EditText mEmailInput;
+    private String newPassword;
+    private String newEmail;
+
+    public final static String NEWPASSWORD = "ActiveTransport.NEWPASSWORD";
+    public final static String NEWEMAIL = "ActiveTransport.NEWEMAIL";
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,8 @@ public class SettingsActivity extends AppCompatActivity {
         final Intent intent = getIntent();
         final String oldPassword = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
         final String oldEmail = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
+        newPassword = oldPassword;
+        newEmail = oldEmail;
 
         mEmailView = (Button) findViewById(R.id.change_email);
         mPhoneView = (Button) findViewById(R.id.change_phone);
@@ -156,6 +163,7 @@ public class SettingsActivity extends AppCompatActivity {
         final Firebase ref = new Firebase(FIREBASE_URL);
         final String oldPassword = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
         final String oldEmail = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
+        newEmail = oldEmail;
 
         final Firebase userRef = ref.child("users").child(uid);
 
@@ -239,12 +247,12 @@ public class SettingsActivity extends AppCompatActivity {
                         public void onSuccess() {
                             userRef.child("email").setValue(email);
                             Context context = getApplicationContext();
-                            CharSequence text = "Successfully changed email, logging out";
+                            CharSequence text = "Successfully changed email.";
                             int duration = Toast.LENGTH_SHORT;
 
                             Toast toast = Toast.makeText(context, text, duration);
                             toast.show();
-                            logout(email,oldPasswordIn,true);
+                            newEmail = email;
                         }
 
                         @Override
@@ -373,12 +381,12 @@ public class SettingsActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess() {
                             Context context = getApplicationContext();
-                            CharSequence text = "Successfully changed password, logging out";
+                            CharSequence text = "Successfully changed password.";
                             int duration = Toast.LENGTH_SHORT;
 
                             Toast toast = Toast.makeText(context, text, duration);
                             toast.show();
-                            logout(oldEmail,password,true);
+                            newPassword = password;
 
                         }
 
@@ -553,6 +561,19 @@ public class SettingsActivity extends AppCompatActivity {
 //        }
 //
 //    }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(this, ChecklistActivity.class);
+        // code here to show dialog
+
+        intent.putExtra("from", "settings");
+        intent.putExtra(NEWEMAIL,newEmail);
+        intent.putExtra(NEWPASSWORD,newPassword);
+        startActivity(intent);
+        finish();
+    }
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic

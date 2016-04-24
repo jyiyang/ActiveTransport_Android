@@ -90,10 +90,15 @@ public class ChecklistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
 
-        /* Get user email and password from LoginActivity. */
+        /* Get user email and password from LoginActivity/SettingsActivity*/
         Intent intent = getIntent();
-        userEmail = intent.getStringExtra(LoginActivity.CHECKLIST);
-        password = intent.getStringExtra(LoginActivity.PASSWORD);
+        if (intent.getStringExtra("from").equals("settings")) {
+            userEmail = intent.getStringExtra(SettingsActivity.NEWEMAIL);
+            password = intent.getStringExtra(SettingsActivity.NEWPASSWORD);
+        } else if (intent.getStringExtra("from").equals("login")){
+            userEmail = intent.getStringExtra(LoginActivity.CHECKLIST);
+            password = intent.getStringExtra(LoginActivity.PASSWORD);
+        }
 
         Firebase ref = new Firebase(FIREBASE_URL);
         Query userRef = ref.child("users").orderByChild("email").equalTo(userEmail);

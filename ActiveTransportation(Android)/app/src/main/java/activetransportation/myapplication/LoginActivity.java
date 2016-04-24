@@ -454,6 +454,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Intent myIntent = new Intent(LoginActivity.this, ChecklistActivity.class);
                 myIntent.putExtra(CHECKLIST, mEmail);
                 myIntent.putExtra(PASSWORD, mPassword);
+                myIntent.putExtra("from", "login");
 
 
                 //System.out.println(mEmail);
