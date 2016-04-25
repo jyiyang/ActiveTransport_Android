@@ -1,6 +1,11 @@
 package activetransportation.myapplication;
 
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -50,7 +55,7 @@ public class NotifyActivity extends AppCompatActivity {
     private final Map<String, Boolean> stuArriveMap = new HashMap<String, Boolean>();
     // Use a hashmap to store whether a student is present;
     private final Map<String, String> stuNameMap = new HashMap<String, String>();
-
+    
 
     /* Switch activities when click on tabs */
     public void switchChecklist(View view) {
@@ -248,9 +253,35 @@ public class NotifyActivity extends AppCompatActivity {
     // Helper function for texting a user
     public void textMsg(String phoneNum, String message, String stuName) {
         try {
+
+            PendingIntent sentPI = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent("SENT"), 0);
+
+            getApplicationContext().registerReceiver(new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    switch(getResultCode()) {
+                        case Activity.RESULT_OK:
+                            Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_LONG).show();
+                            break;
+                        case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                            Toast.makeText(getApplicationContext(), "Fail to send text", Toast.LENGTH_LONG).show();
+                            break;
+                        case SmsManager.RESULT_ERROR_NO_SERVICE:
+                            Toast.makeText(getApplicationContext(), "Fail to send text", Toast.LENGTH_LONG).show();
+                            break;
+                        case SmsManager.RESULT_ERROR_RADIO_OFF:
+                            Toast.makeText(getApplicationContext(), "Fail to send text", Toast.LENGTH_LONG).show();
+                            break;
+                    }
+
+                }
+            }, new IntentFilter("SENT"));
+
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(phoneNum, null, message, null, null);
             String notifyMsg = "SMS sent to " + stuName + "'s parent";
+
+
             Toast.makeText(getApplicationContext(), notifyMsg, Toast.LENGTH_LONG).show();
         }
 
