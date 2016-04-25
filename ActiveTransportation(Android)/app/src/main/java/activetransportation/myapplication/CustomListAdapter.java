@@ -30,6 +30,7 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
     private Context context;
     private Boolean isStaff;
     private String staffID;
+    private String timeOfDay;
     private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
 
     public CustomListAdapter(ArrayList<Student> list, Context context) {
@@ -86,10 +87,11 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
                 // update your model (or other business logic) based on isChecked
                 Firebase ref = new Firebase(FIREBASE_URL);
                 GregorianCalendar time = new GregorianCalendar();
-                if (time.get(Calendar.AM_PM) == 1) {
-                    final String timeOfDay = "afternoon";
+                if (time.get(Calendar.AM_PM) == Calendar.PM) {
+                    timeOfDay = "afternoon";
+                } else {
+                    timeOfDay = "morning";
                 }
-                final String timeOfDay = "morning";
 
                 final String timeString =
                         android.text.format.DateFormat.format("yyyy-MM-dd", time).toString();
@@ -165,4 +167,3 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
         });
     }
 }
-

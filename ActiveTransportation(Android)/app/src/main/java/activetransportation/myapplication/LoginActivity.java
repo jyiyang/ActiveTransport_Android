@@ -111,6 +111,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         Firebase.setAndroidContext(this);
         setContentView(R.layout.activity_login);
         // Set up the login form.
+
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
@@ -453,8 +454,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 Intent myIntent = new Intent(LoginActivity.this, ChecklistActivity.class);
                 myIntent.putExtra(CHECKLIST, mEmail);
                 myIntent.putExtra(PASSWORD, mPassword);
+                myIntent.putExtra("from", "login");
+
+
                 //System.out.println(mEmail);
+
                 LoginActivity.this.startActivity(myIntent);
+                finish();
             } else {
                 switch (loginResults.loginError.getCode()) {
                     case FirebaseError.USER_DOES_NOT_EXIST: {

@@ -1,201 +1,578 @@
 package activetransportation.myapplication;
 
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
 
 /**
- * Created by KritiKAl on 4/15/2016.
+ * Created by Yiqing Cai on 4/15/2016.
  */
 public class SettingsActivity extends AppCompatActivity {
 
     private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
-    private EditText mEmailView;
-    private EditText mPhoneView;
-    private EditText mOldPasswordView;
-    private EditText mPasswordView;
-    private EditText mRePasswordView;
-    private Button mSave;
+    private Button mEmailView;
+    private Button mPhoneView;
+    private EditText mOldPasswordInput;
+    private EditText mPasswordInput;
+    private EditText mRePasswordInput;
+    private Button mChangePasswordView;
+    private Button mLogOut;
+    private final Context context = this;
+    private EditText mPhoneInput;
+    private EditText mEmailInput;
+    private String newPassword;
+    private String newEmail;
+
+    public final static String NEWPASSWORD = "ActiveTransport.NEWPASSWORD";
+    public final static String NEWEMAIL = "ActiveTransport.NEWEMAIL";
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-
         final Intent intent = getIntent();
+        final String oldPassword = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
+        final String oldEmail = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
+        newPassword = oldPassword;
+        newEmail = oldEmail;
 
-        mEmailView = (EditText) findViewById(R.id.change_email);
-        mPhoneView = (EditText) findViewById(R.id.change_phone);
-        mOldPasswordView = (EditText) findViewById(R.id.old_password);
-        mPasswordView = (EditText) findViewById(R.id.change_password);
-        mRePasswordView = (EditText) findViewById(R.id.change_reenter_password);
+        mEmailView = (Button) findViewById(R.id.change_email);
+        mPhoneView = (Button) findViewById(R.id.change_phone);
+        mChangePasswordView = (Button) findViewById(R.id.change_password);
 
-        mPhoneView.setError(null);
-        mEmailView.setError(null);
-        mOldPasswordView.setError(null);
-        mPasswordView.setError(null);
-        mRePasswordView.setError(null);
-        mSave = (Button) findViewById(R.id.save_settings);
+        mLogOut = (Button) findViewById(R.id.log_out);
 
-        mSave.setOnClickListener(new View.OnClickListener() {
+        mLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptChange(intent);
+                logout(oldEmail,oldPassword, false);
+            }
+        });
+        mPhoneView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changePhoneNumber(intent);
+            }
+        });
+        mEmailView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeEmail(intent);
+            }
+        });
+        mChangePasswordView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changePassword(intent);
             }
         });
     }
 
-    private void attemptChange(Intent intent) {
+//Keep pop up dialog alive after rotation.
+    private static void doKeepDialog(Dialog dialog){
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setAttributes(lp);
+    }
 
-        String oldPasswordT = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
-        final String oldEmail = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
-        String phone = mPhoneView.getText().toString();
-        final String email = mEmailView.getText().toString();
-        String oldPassword = mOldPasswordView.getText().toString();
-        String password = mPasswordView.getText().toString();
-        String rePassword = mRePasswordView.getText().toString();
-
-        boolean cancel = false;
-        View focusView = null;
-        boolean changePassword = false;
-        boolean changePhone = false;
-        boolean changeEmail = false;
-
+    private void changePhoneNumber(Intent intent) {
         Firebase ref = new Firebase(FIREBASE_URL);
-
         String uid = intent.getStringExtra(ChecklistActivity.USERID);
         final Firebase userRef = ref.child("users").child(uid);
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(context);
+        View promptsView = li.inflate(R.layout.settings_changephone, null);
 
-        if (!TextUtils.isEmpty(phone)) {
-            if(!android.util.Patterns.PHONE.matcher(phone).matches()) {
-                mPhoneView.setError("Please input a valid phone number");
-                focusView = mPhoneView;
-                cancel = true;
-            } else {
-                changePhone = true;
-            }
-        }
+        mPhoneInput = (EditText) promptsView.findViewById(R.id.change_phone_input);
+        mPhoneInput.setError(null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                context);
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
 
-        if (!TextUtils.isEmpty(email)) {
-            if (!isEmailValid(email)) {
-                mEmailView.setError(getString(R.string.error_invalid_email));
-                focusView = mEmailView;
-                cancel = true;
-            } else {
-                changeEmail = true;
-            }
-        }
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // get user input and set it to result
+                                // edit text
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
 
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
+        // create alert dialog
+        final AlertDialog alertDialog = alertDialogBuilder.create();
 
-        if (!TextUtils.isEmpty(password) && password.equals(rePassword)){
-            if (oldPassword.equals(oldPasswordT)) {
-                changePassword = true;
-            } else {
-                mOldPasswordView.setError("Wrong Password");
-                focusView = mOldPasswordView;
-                cancel = true;
-            }
-        }
+        // show it
+        alertDialog.show();
+        doKeepDialog(alertDialog);
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Boolean wantToCloseDialog = false;
+                String phone = mPhoneInput.getText().toString();
 
-        if (!TextUtils.isEmpty(password) && !password.equals(rePassword)) {
-            mRePasswordView.setError("Please make sure the passwords match");
-            focusView = mRePasswordView;
-            cancel = true;
-        }
-
-        if (cancel) {
-            focusView.requestFocus();
-        } else {
-            if (changePhone) {
-                userRef.child("contactInfo").setValue(phone);
-            }
-
-            if (changeEmail) {
-                ref.changeEmail(oldEmail, oldPasswordT, email, new Firebase.ResultHandler() {
-                    @Override
-                    public void onSuccess() {
-                        userRef.child("email").setValue(email);
-                        Context context = getApplicationContext();
-                        CharSequence text = "Successfully changed email";
-                        int duration = Toast.LENGTH_SHORT;
-
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
+                if (TextUtils.isEmpty(phone)) {
+                    mPhoneInput.setError(getString(R.string.error_field_required));
+                    mPhoneInput.requestFocus();
+                }
+                if (!TextUtils.isEmpty(phone)) {
+                    if (!android.util.Patterns.PHONE.matcher(phone).matches()) {
+                        mPhoneInput.setError("Please input a valid phone number");
+                        mPhoneInput.requestFocus();
+                    } else {
+                        userRef.child("contactInfo").setValue(phone);
+                        wantToCloseDialog = true;
                     }
+                }
+                if (wantToCloseDialog)
+                    alertDialog.dismiss();
+                //else dialog stays open. Make sure you have an obvious way to close the dialog especially if you set cancellable to false.
+            }
+        });
+    }
 
-                    @Override
-                    public void onError(FirebaseError firebaseError) {
-                        Context context = getApplicationContext();
-                        CharSequence text = "Email change failed: " + firebaseError;
-                        int duration = Toast.LENGTH_SHORT;
+    private void changeEmail(Intent intent) {
+        String uid = intent.getStringExtra(ChecklistActivity.USERID);
+        final Firebase ref = new Firebase(FIREBASE_URL);
+        final String oldPassword = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
+        final String oldEmail = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
+        newEmail = oldEmail;
 
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
-                    }
-                });
-                try {
-                    // Simulate network access.
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
+        final Firebase userRef = ref.child("users").child(uid);
 
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(context);
+        View promptsView = li.inflate(R.layout.settings_changeemail, null);
+
+        mEmailInput = (EditText) promptsView.findViewById(R.id.change_email_input);
+        mOldPasswordInput = (EditText) promptsView.findViewById(R.id.old_password_input);
+        mOldPasswordInput.requestFocus();
+        mEmailInput.setError(null);
+        mOldPasswordInput.setError(null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                context);
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // get user input and set it to result
+                                // edit text
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+        doKeepDialog(alertDialog);
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Boolean wantToCloseDialog = false;
+                final String oldPasswordIn = mOldPasswordInput.getText().toString();
+                final String email = mEmailInput.getText().toString();
+                Boolean cancel = false;
+
+                if (TextUtils.isEmpty(oldPasswordIn)) {
+                    mOldPasswordInput.setError(getString(R.string.error_field_required));
+                    mOldPasswordInput.requestFocus();
+                    cancel = true;
+                }
+                if (TextUtils.isEmpty(email)) {
+                    mEmailInput.setError(getString(R.string.error_field_required));
+                    mEmailInput.requestFocus();
+                    cancel = true;
+                }
+                if (!oldPasswordIn.equals(oldPassword)) {
+                    mOldPasswordInput.setError("Please input correct password");
+                    mOldPasswordInput.requestFocus();
+                    cancel = true;
+                }
+                if (email.equals(oldEmail)) {
+                    mEmailInput.setError("Please input a new Email address");
+                    mEmailInput.requestFocus();
+                    cancel = true;
                 }
 
-            }
-            if (changePassword) {
-                ref.changePassword(oldEmail, oldPasswordT, password, new Firebase.ResultHandler() {
-                    @Override
-                    public void onSuccess() {
-                        Context context = getApplicationContext();
-                        CharSequence text = "Successfully changed password";
-                        int duration = Toast.LENGTH_SHORT;
-
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
-
+                if (!TextUtils.isEmpty(email)) {
+                    if (!isEmailValid(email)) {
+                        mEmailInput.setError(getString(R.string.error_field_required));
+                        mEmailInput.requestFocus();
+                        cancel = true;
                     }
-                    @Override
-                    public void onError(FirebaseError firebaseError) {
-                        Context context = getApplicationContext();
-                        CharSequence text = "Password change failed: " + firebaseError;
-                        int duration = Toast.LENGTH_SHORT;
-
-                        Toast toast = Toast.makeText(context, text, duration);
-                        toast.show();
-                    }
-                });
-                try {
-                    // Simulate network access.
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-
                 }
+
+                if(!cancel) {
+                    ref.changeEmail(oldEmail, oldPasswordIn, email, new Firebase.ResultHandler() {
+                        @Override
+                        public void onSuccess() {
+                            userRef.child("email").setValue(email);
+                            Context context = getApplicationContext();
+                            CharSequence text = "Successfully changed email.";
+                            int duration = Toast.LENGTH_SHORT;
+
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                            newEmail = email;
+                        }
+
+                        @Override
+                        public void onError(FirebaseError firebaseError) {
+                            Context context = getApplicationContext();
+                            CharSequence text = "Email change failed: " + firebaseError;
+                            int duration = Toast.LENGTH_SHORT;
+
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                        }
+                    });
+                    try {
+                        // Simulate network access.
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+
+                    }
+                    wantToCloseDialog = true;
+                }
+                if (wantToCloseDialog)
+                    alertDialog.dismiss();
+                //else dialog stays open. Make sure you have an obvious way to close the dialog especially if you set cancellable to false.
             }
-            Context context = getApplicationContext();
-            CharSequence text = "Changes saved";
-            int duration = Toast.LENGTH_SHORT;
+        });
+    }
 
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
+    private void changePassword(Intent intent) {
+        String uid = intent.getStringExtra(ChecklistActivity.USERID);
+        final Firebase ref = new Firebase(FIREBASE_URL);
+        final String oldPassword = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
+        final String oldEmail = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
 
-            Intent ChecklistIntent = new Intent(this, ChecklistActivity.class);
-            startActivity(ChecklistIntent);
-        }
+        // get prompts.xml view
+        LayoutInflater li = LayoutInflater.from(context);
+        View promptsView = li.inflate(R.layout.settings_changepassword, null);
 
+        mOldPasswordInput = (EditText) promptsView.findViewById(R.id.old_password_input);
+        mPasswordInput = (EditText) promptsView.findViewById(R.id.change_password_input);
+        mRePasswordInput = (EditText) promptsView.findViewById(R.id.change_reenter_password);
+        mOldPasswordInput.setError(null);
+        mPasswordInput.setError(null);
+        mRePasswordInput.setError(null);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                context);
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+
+        // set dialog message
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // do nothing
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create alert dialog
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+        doKeepDialog(alertDialog);
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Boolean wantToCloseDialog = false;
+                String oldPasswordIn = mOldPasswordInput.getText().toString();
+                final String password = mPasswordInput.getText().toString();
+                final String rePassword = mRePasswordInput.getText().toString();
+                Boolean cancel = false;
+
+                if (TextUtils.isEmpty(oldPasswordIn)) {
+                    mOldPasswordInput.setError(getString(R.string.error_field_required));
+                    mOldPasswordInput.requestFocus();
+                    cancel = true;
+                }
+                if (TextUtils.isEmpty(password)) {
+                    mPasswordInput.setError(getString(R.string.error_field_required));
+                    mPasswordInput.requestFocus();
+                    cancel = true;
+                }
+                if (TextUtils.isEmpty(rePassword)) {
+                    mRePasswordInput.setError(getString(R.string.error_field_required));
+                    mRePasswordInput.requestFocus();
+                    cancel = true;
+                }
+
+                if (!oldPasswordIn.equals(oldPassword)) {
+                    mOldPasswordInput.setError("Please input correct password");
+                    mOldPasswordInput.requestFocus();
+                    cancel = true;
+                    System.out.println(oldPassword);
+                }
+
+                if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+                    mPasswordInput.setError(getString(R.string.error_invalid_password));
+                    mPasswordInput.requestFocus();
+                    cancel = true;
+                }
+
+                if (!TextUtils.isEmpty(password) && password.equals(oldPassword)) {
+                    mPasswordInput.setError("Please enter a new password.");
+                    mPasswordInput.requestFocus();
+                    cancel = true;
+                }
+
+
+                if (!TextUtils.isEmpty(password) && !password.equals(rePassword)) {
+                    mRePasswordInput.setError("Please make sure the passwords match");
+                    mRePasswordInput.requestFocus();
+                    cancel = true;
+                }
+
+
+                if(!cancel) {
+                    ref.changePassword(oldEmail, oldPasswordIn, password, new Firebase.ResultHandler() {
+                        @Override
+                        public void onSuccess() {
+                            Context context = getApplicationContext();
+                            CharSequence text = "Successfully changed password.";
+                            int duration = Toast.LENGTH_SHORT;
+
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                            newPassword = password;
+
+                        }
+
+                        @Override
+                        public void onError(FirebaseError firebaseError) {
+                            Context context = getApplicationContext();
+                            CharSequence text = "Password change failed: " + firebaseError;
+                            int duration = Toast.LENGTH_SHORT;
+
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                        }
+                    });
+                    try {
+                        // Simulate network access.
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+
+                    }
+                    wantToCloseDialog = true;
+                }
+                if (wantToCloseDialog)
+                    alertDialog.dismiss();
+                //else dialog stays open. Make sure you have an obvious way to close the dialog especially if you set cancellable to false.
+            }
+        });
+    }
+
+    private void logout(String newEmail, String newPassword, Boolean change) {
+        final Firebase ref = new Firebase(FIREBASE_URL);
+        ref.unauth();
+
+
+        Intent i = getBaseContext().getPackageManager()
+                .getLaunchIntentForPackage( getBaseContext().getPackageName() );
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        finish();
+        startActivity(i);
+
+    }
+
+
+//    private void attemptChange(Intent intent) {
+//
+//        String oldPasswordT = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
+//        final String oldEmail = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
+//        String phone = mPhoneView.getText().toString();
+//        final String email = mEmailView.getText().toString();
+//        String password = mPasswordView.getText().toString();
+//        String rePassword = mRePasswordView.getText().toString();
+//
+//        boolean cancel = false;
+//        View focusView = null;
+//        boolean changePassword = false;
+//        boolean changePhone = false;
+//        boolean changeEmail = false;
+//
+//        Firebase ref = new Firebase(FIREBASE_URL);
+//
+//        String uid = intent.getStringExtra(ChecklistActivity.USERID);
+//        final Firebase userRef = ref.child("users").child(uid);
+//
+//        if (!TextUtils.isEmpty(phone)) {
+//            if(!android.util.Patterns.PHONE.matcher(phone).matches()) {
+//                mPhoneView.setError("Please input a valid phone number");
+//                focusView = mPhoneView;
+//                cancel = true;
+//            } else {
+//                changePhone = true;
+//            }
+//        }
+//
+//        if (!TextUtils.isEmpty(email)) {
+//            if (!isEmailValid(email)) {
+//                mEmailView.setError(getString(R.string.error_invalid_email));
+//                focusView = mEmailView;
+//                cancel = true;
+//            } else {
+//                changeEmail = true;
+//            }
+//        }
+//
+//        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+//            mPasswordView.setError(getString(R.string.error_invalid_password));
+//            focusView = mPasswordView;
+//            cancel = true;
+//        }
+//
+//
+//        if (!TextUtils.isEmpty(password) && !password.equals(rePassword)) {
+//            mRePasswordView.setError("Please make sure the passwords match");
+//            focusView = mRePasswordView;
+//            cancel = true;
+//        }
+//
+//        if (cancel) {
+//            focusView.requestFocus();
+//        } else {
+//            if (changePhone) {
+//                userRef.child("contactInfo").setValue(phone);
+//            }
+//
+//            if (changeEmail) {
+//                ref.changeEmail(oldEmail, oldPasswordT, email, new Firebase.ResultHandler() {
+//                    @Override
+//                    public void onSuccess() {
+//                        userRef.child("email").setValue(email);
+//                        Context context = getApplicationContext();
+//                        CharSequence text = "Successfully changed email";
+//                        int duration = Toast.LENGTH_SHORT;
+//
+//                        Toast toast = Toast.makeText(context, text, duration);
+//                        toast.show();
+//                    }
+//
+//                    @Override
+//                    public void onError(FirebaseError firebaseError) {
+//                        Context context = getApplicationContext();
+//                        CharSequence text = "Email change failed: " + firebaseError;
+//                        int duration = Toast.LENGTH_SHORT;
+//
+//                        Toast toast = Toast.makeText(context, text, duration);
+//                        toast.show();
+//                    }
+//                });
+//                try {
+//                    // Simulate network access.
+//                    Thread.sleep(2000);
+//                } catch (InterruptedException e) {
+//
+//                }
+//
+//            }
+//            if (changePassword) {
+//                ref.changePassword(oldEmail, oldPasswordT, password, new Firebase.ResultHandler() {
+//                    @Override
+//                    public void onSuccess() {
+//                        Context context = getApplicationContext();
+//                        CharSequence text = "Successfully changed password";
+//                        int duration = Toast.LENGTH_SHORT;
+//
+//                        Toast toast = Toast.makeText(context, text, duration);
+//                        toast.show();
+//
+//                    }
+//                    @Override
+//                    public void onError(FirebaseError firebaseError) {
+//                        Context context = getApplicationContext();
+//                        CharSequence text = "Password change failed: " + firebaseError;
+//                        int duration = Toast.LENGTH_SHORT;
+//
+//                        Toast toast = Toast.makeText(context, text, duration);
+//                        toast.show();
+//                    }
+//                });
+//                try {
+//                    // Simulate network access.
+//                    Thread.sleep(2000);
+//                } catch (InterruptedException e) {
+//
+//                }
+//            }
+//            Context context = getApplicationContext();
+//            CharSequence text = "Changes saved";
+//            int duration = Toast.LENGTH_SHORT;
+//
+//            Toast toast = Toast.makeText(context, text, duration);
+//            toast.show();
+//
+//            Intent ChecklistIntent = new Intent(this, ChecklistActivity.class);
+//            startActivity(ChecklistIntent);
+//        }
+//
+//    }
+
+    @Override
+    public void onBackPressed()
+    {
+        Intent intent = new Intent(this, ChecklistActivity.class);
+        // code here to show dialog
+
+        intent.putExtra("from", "settings");
+        intent.putExtra(NEWEMAIL,newEmail);
+        intent.putExtra(NEWPASSWORD,newPassword);
+        startActivity(intent);
+        finish();
     }
 
     private boolean isEmailValid(String email) {
@@ -205,6 +582,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() >= 0;
     }
 }
