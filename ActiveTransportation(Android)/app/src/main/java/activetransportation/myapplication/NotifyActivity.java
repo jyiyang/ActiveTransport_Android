@@ -254,35 +254,51 @@ public class NotifyActivity extends AppCompatActivity {
     public void textMsg(String phoneNum, String message, String stuName) {
         try {
 
-            PendingIntent sentPI = PendingIntent.getBroadcast(getApplicationContext(), 0, new Intent("SENT"), 0);
+            final String notifyMsg = "SMS sent to " + stuName + "'s parent";
+            final String deliverMsg = "SMS to" + stuName + "'s parent is delivered";
 
-            getApplicationContext().registerReceiver(new BroadcastReceiver() {
+            PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent("SENT"), 0);
+            PendingIntent deliverPI = PendingIntent.getBroadcast(this, 0, new Intent("DELIVERED"), 0);
+
+            registerReceiver(new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
-                    switch(getResultCode()) {
+                    switch (getResultCode()) {
                         case Activity.RESULT_OK:
-                            Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), notifyMsg, Toast.LENGTH_LONG).show();
                             break;
                         case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                            Toast.makeText(getApplicationContext(), "Fail to send text", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "Fail to send text: Generic failure. Please check your mobile connection.", Toast.LENGTH_LONG).show();
                             break;
                         case SmsManager.RESULT_ERROR_NO_SERVICE:
-                            Toast.makeText(getApplicationContext(), "Fail to send text", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "Fail to send text: No service. Please contact your service carrier.", Toast.LENGTH_LONG).show();
                             break;
                         case SmsManager.RESULT_ERROR_RADIO_OFF:
-                            Toast.makeText(getApplicationContext(), "Fail to send text", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "Fail to send text: Radio off. Please check your mobile connection. ", Toast.LENGTH_LONG).show();
                             break;
                     }
-
                 }
             }, new IntentFilter("SENT"));
 
+            registerReceiver(new BroadcastReceiver(){
+                @Override
+                public void onReceive(Context arg0, Intent arg1) {
+                    switch (getResultCode())
+                    {
+                        case Activity.RESULT_OK:
+                            Toast.makeText(getBaseContext(), deliverMsg,
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                        case Activity.RESULT_CANCELED:
+                            Toast.makeText(getBaseContext(), "SMS did not successfully deliver",
+                                    Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                }
+            }, new IntentFilter("DELIVERED"));
+
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNum, null, message, null, null);
-            String notifyMsg = "SMS sent to " + stuName + "'s parent";
-
-
-            Toast.makeText(getApplicationContext(), notifyMsg, Toast.LENGTH_LONG).show();
+            smsManager.sendTextMessage(phoneNum, null, message, sentPI, deliverPI);
         }
 
         catch (Exception e) {

@@ -46,40 +46,6 @@
         android:textSize="16dp" />
 
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/button_call"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="FUCK"
-            android:onClick="call"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_gravity="center_vertical" />
-
-        <Button
-            android:id="@+id/button_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="You"
-            android:onClick="call"
-            style="?android:attr/borderlessButtonStyle" />
-
-        <Button
-            android:id="@+id/button_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="all"
-            android:onClick="call"
-            style="?android:attr/borderlessButtonStyle" />
-
-    </LinearLayout>
-
-
-
     <Button
         android:id="@+id/checklist_button"
         android:layout_width="wrap_content"

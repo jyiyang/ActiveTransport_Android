@@ -99,7 +99,7 @@ public class ContactInfoListAdapter extends BaseAdapter implements ListAdapter {
                         context.startActivity(textIntent);
                     }
                     catch (android.content.ActivityNotFoundException ex) {
-                        Toast.makeText(context.getApplicationContext(), "your sms app is not founded", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context.getApplicationContext(), "Your sms app does not exist", Toast.LENGTH_SHORT).show();
                     }
 
                 }
@@ -120,12 +120,13 @@ public class ContactInfoListAdapter extends BaseAdapter implements ListAdapter {
                 @Override
                 public void onClick(View view) {
                     Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("plain/text");
                     emailIntent.putExtra(Intent.EXTRA_EMAIL, email);
 
                     try {
                         context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
                     } catch (android.content.ActivityNotFoundException ex) {
-                        Toast.makeText(context, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "There are no email client installed.", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
