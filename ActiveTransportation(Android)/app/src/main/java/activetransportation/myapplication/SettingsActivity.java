@@ -36,6 +36,8 @@ public class SettingsActivity extends AppCompatActivity {
     private EditText mEmailInput;
     private String newPassword;
     private String newEmail;
+    private String Password;
+    private String Email;
 
     public final static String NEWPASSWORD = "ActiveTransport.NEWPASSWORD";
     public final static String NEWEMAIL = "ActiveTransport.NEWEMAIL";
@@ -45,10 +47,8 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         final Intent intent = getIntent();
-        final String oldPassword = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
-        final String oldEmail = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
-        newPassword = oldPassword;
-        newEmail = oldEmail;
+        Password = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
+        Email = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
 
         mEmailView = (Button) findViewById(R.id.change_email);
         mPhoneView = (Button) findViewById(R.id.change_phone);
@@ -157,9 +157,6 @@ public class SettingsActivity extends AppCompatActivity {
     private void changeEmail(Intent intent) {
         String uid = intent.getStringExtra(ChecklistActivity.USERID);
         final Firebase ref = new Firebase(FIREBASE_URL);
-        final String oldPassword = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
-        final String oldEmail = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
-        newEmail = oldEmail;
 
         final Firebase userRef = ref.child("users").child(uid);
 
@@ -218,12 +215,12 @@ public class SettingsActivity extends AppCompatActivity {
                     mEmailInput.requestFocus();
                     cancel = true;
                 }
-                if (!oldPasswordIn.equals(oldPassword)) {
+                if (!oldPasswordIn.equals(Password)) {
                     mOldPasswordInput.setError("Please input correct password");
                     mOldPasswordInput.requestFocus();
                     cancel = true;
                 }
-                if (email.equals(oldEmail)) {
+                if (email.equals(Email)) {
                     mEmailInput.setError("Please input a new Email address");
                     mEmailInput.requestFocus();
                     cancel = true;
@@ -238,7 +235,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
 
                 if(!cancel) {
-                    ref.changeEmail(oldEmail, oldPasswordIn, email, new Firebase.ResultHandler() {
+                    ref.changeEmail(Email, oldPasswordIn, email, new Firebase.ResultHandler() {
                         @Override
                         public void onSuccess() {
                             userRef.child("email").setValue(email);
@@ -248,7 +245,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                             Toast toast = Toast.makeText(context, text, duration);
                             toast.show();
-                            newEmail = email;
+                            Email = email;
                         }
 
                         @Override
@@ -278,8 +275,6 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void changePassword(Intent intent) {
         final Firebase ref = new Firebase(FIREBASE_URL);
-        final String oldPassword = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
-        final String oldEmail = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
 
         // Get prompts.xml view
         LayoutInflater li = LayoutInflater.from(context);
@@ -344,11 +339,11 @@ public class SettingsActivity extends AppCompatActivity {
                     cancel = true;
                 }
 
-                if (!oldPasswordIn.equals(oldPassword)) {
+                if (!oldPasswordIn.equals(Password)) {
                     mOldPasswordInput.setError("Please input correct password");
                     mOldPasswordInput.requestFocus();
                     cancel = true;
-                    System.out.println(oldPassword);
+                    System.out.println(Password);
                 }
 
                 if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
@@ -357,7 +352,7 @@ public class SettingsActivity extends AppCompatActivity {
                     cancel = true;
                 }
 
-                if (!TextUtils.isEmpty(password) && password.equals(oldPassword)) {
+                if (!TextUtils.isEmpty(password) && password.equals(Password)) {
                     mPasswordInput.setError("Please enter a new password.");
                     mPasswordInput.requestFocus();
                     cancel = true;
@@ -372,7 +367,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 
                 if(!cancel) {
-                    ref.changePassword(oldEmail, oldPasswordIn, password, new Firebase.ResultHandler() {
+                    ref.changePassword(Email, oldPasswordIn, password, new Firebase.ResultHandler() {
                         @Override
                         public void onSuccess() {
                             Context context = getApplicationContext();
@@ -381,7 +376,7 @@ public class SettingsActivity extends AppCompatActivity {
 
                             Toast toast = Toast.makeText(context, text, duration);
                             toast.show();
-                            newPassword = password;
+                            Password = password;
 
                         }
 
@@ -427,8 +422,8 @@ public class SettingsActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ChecklistActivity.class);
 
         intent.putExtra("from", "settings");
-        intent.putExtra(NEWEMAIL,newEmail);
-        intent.putExtra(NEWPASSWORD,newPassword);
+        intent.putExtra(NEWEMAIL,Email);
+        intent.putExtra(NEWPASSWORD,Password);
         startActivity(intent);
         finish();
     }
