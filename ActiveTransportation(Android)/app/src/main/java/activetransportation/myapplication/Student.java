@@ -1,5 +1,8 @@
 package activetransportation.myapplication;
 
+/**
+ * The Student Class
+ */
 public class Student {
 
     private String ID;

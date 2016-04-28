@@ -10,13 +10,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-
 public class ExpandableTimeLocationListAdapter extends BaseExpandableListAdapter implements ExpandableListAdapter {
-    public final static String CONTACT_INFO = "ActiveTransport.CONTACT_INFO";
     private ArrayList<Route> routeList;
     private Context context;
-    private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
-    private LayoutInflater inflater;
 
     private static final class ViewHolder {
         TextView textLabel;
@@ -27,7 +23,6 @@ public class ExpandableTimeLocationListAdapter extends BaseExpandableListAdapter
     }
 
     public ExpandableTimeLocationListAdapter(ArrayList<Route> routeList, Context context) {
-//        this.isStaff = Boolean.parseBoolean(list.get(0).getName());
         this.routeList = routeList;
         this.context = context;
         System.out.print("Number of routes (from constructor) are: ");
@@ -94,31 +89,21 @@ public class ExpandableTimeLocationListAdapter extends BaseExpandableListAdapter
         System.out.println(getGroupCount());
 
         if (resultView == null) {
-//            System.out.println(0);
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            System.out.println(1);
             resultView = inflater.inflate(R.layout.loc_row_layout, parent, false);
 
-//            System.out.println(2);
             holder = new ViewHolderGroup();
-//            System.out.println(3);
             holder.text1 = (TextView) resultView.findViewById(R.id.m_location);
             holder.text2 = (TextView) resultView.findViewById(R.id.m_time);
-//            System.out.println(4);
             resultView.setTag(holder);
-//            System.out.println(5);
         }
         else {
-//            System.out.println(6);
             holder = (ViewHolderGroup) resultView.getTag();
         }
 
-//        System.out.println(7);
         final Route route = getGroup(groupPosition);
-//        System.out.println(8);
         holder.text1.setText(route.getLocation());
         holder.text2.setText(route.getInputTimeString());
-//        System.out.println(9);
         return resultView;
     }
 

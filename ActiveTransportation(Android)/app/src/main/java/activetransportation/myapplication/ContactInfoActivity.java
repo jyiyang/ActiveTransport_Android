@@ -1,14 +1,12 @@
 package activetransportation.myapplication;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -17,15 +15,16 @@ import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 
+/**
+ * An activity that creates the contact info screen.
+ */
 public class ContactInfoActivity extends AppCompatActivity {
 
     private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
-    // private TextView nameView;
+
     private TextView userView;
-    private TextView phoneView;
     private ListView contactView;
 
-    // private String name;
     private String userName;
     private String userContactInfo;
     private String userEmail;
@@ -34,11 +33,12 @@ public class ContactInfoActivity extends AppCompatActivity {
 
     private ContactInfoListAdapter adapter;
 
-
+    /** Return to the ChecklistActivity. */
     public void switchChecklist(View view) {
         finish();
     }
 
+    /** Called when the activity is first created. */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,9 +58,7 @@ public class ContactInfoActivity extends AppCompatActivity {
 
         if (isStaff) {
             createView(someID);
-
         } else {
-
             Firebase routeRef = ref.child("routes").child(someID);
 
             routeRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -88,7 +86,8 @@ public class ContactInfoActivity extends AppCompatActivity {
     private void createView(String userID) {
         Firebase ref = new Firebase(FIREBASE_URL);
         Firebase userRef = ref.child("users").child(userID);
-        // Attach an listener to read the data at our posts reference
+
+        // Attach an listener to read the name and contact information of a given user
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -102,17 +101,8 @@ public class ContactInfoActivity extends AppCompatActivity {
                     } else if (key == "email") {
                         userEmail = (String) postSnapshot.getValue();
                     }
-
                 }
-                if (isStaff) {
-                    System.out.println("parent name: " + userName);
-                } else {
-                    System.out.println("staff name: " + userName);
-                }
-                System.out.println("contactInfo: " + userContactInfo);
 
-                //nameView = (TextView) findViewById(R.id.student_name);
-                //nameView.setText(name + ":");
                 ArrayList<String> contact = new ArrayList<String>();
                 contact.add(userContactInfo);
                 contact.add(userEmail);
@@ -124,27 +114,6 @@ public class ContactInfoActivity extends AppCompatActivity {
 
                 userView = (TextView) findViewById(R.id.parent_name);
                 userView.setText(userName);
-//
-//                phoneView = (TextView) findViewById(R.id.phone_num);
-//                phoneView.setText(userContactInfo);
-
-
-//                phoneView.setOnClickListener(new View.OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(View view) {
-//                        Intent phoneIntent = new Intent(Intent.ACTION_CALL);
-//                        phoneIntent.setData(Uri.parse("tel:" + userContactInfo));
-//                        try {
-//                            startActivity(phoneIntent);
-//                        }
-//                        catch (android.content.ActivityNotFoundException ex) {
-//                            Toast.makeText(getApplicationContext(), "yourActivity is not founded", Toast.LENGTH_SHORT).show();
-//                        }
-//                    }
-//
-//                });
-
             }
 
             @Override

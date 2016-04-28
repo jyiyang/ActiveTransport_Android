@@ -20,9 +20,15 @@ import com.firebase.client.FirebaseError;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ *  An activity that creates a register screen.
+ */
 public class RegisterActivity extends AppCompatActivity {
+
+    // Database link
     private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
+
+    // UI attributes
     private EditText mFirstNameView;
     private EditText mLastNameView;
     private EditText mEmailView;
@@ -32,9 +38,11 @@ public class RegisterActivity extends AppCompatActivity {
     private Button mRegister;
     private RadioButton mIsStaff;
     private RadioButton mIsParent;
-    private String id;
     private View mProgressView;
     private View mRegisterFormView;
+
+    // Data class attributes
+    private String id;
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -86,7 +94,6 @@ public class RegisterActivity extends AppCompatActivity {
         View focusView = null;
 
         //Check for none empty entries.
-
         if (TextUtils.isEmpty(firstName)) {
             mFirstNameView.setError(getString(R.string.error_field_required));
             focusView = mFirstNameView;
@@ -175,17 +182,14 @@ public class RegisterActivity extends AppCompatActivity {
     public User createUser(String id, String firstName, String lastName,  String email,  String phone,
                            boolean isStaff)
     {
-        User newUser = new User (id, email, firstName + " " + lastName, phone, isStaff);
-        return newUser;
+        return (new User (id, email, firstName + " " + lastName, phone, isStaff));
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() >= 0;
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
         return email.contains("@") && email.contains(".");
     }
 
@@ -263,15 +267,12 @@ public class RegisterActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
             try {
                 // Simulate network access.
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 return false;
             }
-
 
             Firebase ref = new Firebase(FIREBASE_URL);
             ref.createUser(mEmail, mPassword, new Firebase.ValueResultHandler<Map<String, Object>>() {
@@ -290,7 +291,6 @@ public class RegisterActivity extends AppCompatActivity {
                     System.out.println(firebaseError);
                 }
             });
-            // TODO: Multiple users and password encryption
             return true;
         }
 

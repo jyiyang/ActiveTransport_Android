@@ -1,5 +1,9 @@
 package activetransportation.myapplication;
 
+/**
+ * The Staff Class
+ * It is a subclass of the user class.
+ */
 public class Staff extends User {
 
     private String routeID;

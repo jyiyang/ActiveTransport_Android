@@ -11,7 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -27,23 +26,21 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ *  An activity that creates a notify screen.
+ */
 public class NotifyActivity extends AppCompatActivity {
 
     // Database link
     private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
-    // Class attributes
-    private ArrayList<String> studentID;
-    private String timeOfDay;
 
-    // For changing activities
+    // Data class attributes
+    private String timeOfDay;
     private boolean isStaff;
     private ArrayList<String> stuIDs;
     private String routeID;
 
     // View attributes
-    private Button sendTextAll;
-    private Button sendTextUnarrived;
-    private Button sendTextArrived;
     private EditText msg;
 
     // Data structures for storage
@@ -55,15 +52,16 @@ public class NotifyActivity extends AppCompatActivity {
     private final Map<String, Boolean> stuArriveMap = new HashMap<String, Boolean>();
     // Use a hashmap to store whether a student is present;
     private final Map<String, String> stuNameMap = new HashMap<String, String>();
-    
 
-    /* Switch activities when click on tabs */
+
+    /** Switch to the ChecklistActivity when the user clicks on the corresponding button. */
     public void switchChecklist(View view) {
 
         Intent intent = new Intent(this, ChecklistActivity.class);
         startActivity(intent);
     }
 
+    /** Switch to the TimeAndLocationActivity when the user clicks on the corresponding button. */
     public void switchTimeAndLoc(View view) {
         Intent intent = new Intent(this, TimeAndLocationActivity.class);
         if (isStaff) {
@@ -74,6 +72,7 @@ public class NotifyActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /** Switch to the (current) NotifyActivity when the user clicks on the corresponding button. */
     public void switchNotify(View view) {
         Intent intent = new Intent(this, NotifyActivity.class);
         startActivity(intent);
@@ -105,7 +104,6 @@ public class NotifyActivity extends AppCompatActivity {
         final String timeString =
                 android.text.format.DateFormat.format("yyyy-MM-dd", time).toString();
 
-        // Database reference
         final Firebase ref = new Firebase(FIREBASE_URL);
 
         for (String stuID : stuIDs) {
@@ -124,12 +122,10 @@ public class NotifyActivity extends AppCompatActivity {
                         if (!stuParentMap.containsKey(sID)) {
                             stuParentMap.put(sID, parentID);
                         }
-
                         // If the student-name pair does not exist, add it into the map
                         if (!stuNameMap.containsKey(sID)) {
                             stuNameMap.put(sID, stuName);
                         }
-
 
                         System.out.print("Size of the student-parent map is ");
                         System.out.println(stuParentMap.size());
@@ -137,7 +133,6 @@ public class NotifyActivity extends AppCompatActivity {
                             String par = stuParentMap.get(stu);
                             System.out.println(stu + ": " + par);
                         }
-
 
                         // Nested listener for parent's contact info
                         ref.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -176,10 +171,6 @@ public class NotifyActivity extends AppCompatActivity {
                                         System.out.println("The read failed: " + firebaseError.getMessage());
                                     }
                                 });
-
-//                                System.out.print("Size of the student-contact map is ");
-//                                System.out.println(stuContactMap.size());
-
                             }
 
                             @Override
@@ -189,7 +180,6 @@ public class NotifyActivity extends AppCompatActivity {
                         });
                     }
                     }
-
                 @Override
                 public void onCancelled(FirebaseError firebaseError) {
                     System.out.println("The read failed: " + firebaseError.getMessage());

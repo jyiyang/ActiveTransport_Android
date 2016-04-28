@@ -2,6 +2,10 @@ package activetransportation.myapplication;
 
 import java.util.ArrayList;
 
+/**
+ * The Parent Class
+ * It is a subclass of the user class.
+ */
 public class Parent extends User {
 
     private ArrayList<String> childrenIDs;

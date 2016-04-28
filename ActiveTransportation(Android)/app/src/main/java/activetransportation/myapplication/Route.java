@@ -4,6 +4,9 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
+/**
+ * The Route Class
+ */
 public class Route {
     private String routeName;
     private String routeID;
@@ -12,11 +15,6 @@ public class Route {
     private ArrayList<String> students;
     private GregorianCalendar time;
     private String timeStr;
-
-    public Route(String name) {
-        this.routeName = name;
-        this.students = new ArrayList<String>();
-    }
 
     public Route(String name, String location, String time, ArrayList<String> students) {
         this.routeName = name;

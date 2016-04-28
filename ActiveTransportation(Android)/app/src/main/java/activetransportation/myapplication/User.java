@@ -1,12 +1,16 @@
 package activetransportation.myapplication;
 
+
+/**
+ * The User Class
+ * It is the common super class of Staff Class and Parent Class.
+ */
 public class User {
     private String userID;
     private String name;
     private String email;
     private boolean isStaff;
     private String contactInfo;
-
 
     public User(String id, String email, String name, String contactInfo, boolean isStaff) {
         this.userID = id;

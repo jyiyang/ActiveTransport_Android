@@ -1,9 +1,5 @@
 package activetransportation.myapplication;
 
-/**
- * Created by Jack Yang on 4/19/16.
- */
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.TextView;
@@ -19,9 +14,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-
 public class ContactInfoListAdapter extends BaseAdapter implements ListAdapter {
-    public final static String CONTACT_INFO = "ActiveTransport.CONTACT_INFO";
     private ArrayList<String> list = new ArrayList<String>();
     private Context context;
     private String email;

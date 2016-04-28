@@ -23,13 +23,11 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class CustomListAdapter extends BaseAdapter implements ListAdapter {
     public final static String CONTACT_INFO = "ActiveTransport.CONTACT_INFO";
     private ArrayList<Student> list = new ArrayList<Student>();
     private Context context;
     private Boolean isStaff;
-    private String staffID;
     private String timeOfDay;
     private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
 
@@ -53,8 +51,6 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
     @Override
     public long getItemId(int pos) {
         return pos;
-        //just return 0 if your list items do not have an Id variable.
-        //return 0;
     }
 
 
@@ -68,17 +64,14 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
 
         final Student student = list.get(position);
 
-        //Handle TextView and display string from your list
+        // Handle TextView and display string from the list
         TextView studentName = (TextView)view.findViewById(R.id.student_name);
         studentName.setText(student.getName());
 
-        //Handle checkboxes and add setOnCheckedChangeListeners
+        // Handle checkboxes and add setOnCheckedChangeListeners
         final CheckBox checkBox = (CheckBox)view.findViewById(R.id.checkbox);
         checkBox.setChecked(false);
         if (!isStaff) { checkBox.setEnabled(false); }
-
-        Firebase ref = new Firebase(FIREBASE_URL);
-        //Query queryRef = studentsRef.orderByKey().equalTo(student.getID());
 
         logHelper(student.getID(),checkBox);
 
@@ -101,7 +94,7 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
             }
         });
 
-        //Handle buttons and add onClickListeners
+        // Handle buttons and add onClickListeners
         Button contactBtn = (Button)view.findViewById(R.id.contact_btn);
         if (isStaff) {
             contactBtn.setText("Contact Parent");
@@ -113,10 +106,8 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), ContactInfoActivity.class);
-                String name = student.getName();  // position is index in the list
                 String parentID = student.getParentID();
                 String routeID = student.getRouteID();
-                Firebase ref = new Firebase(FIREBASE_URL);
 
                 if (isStaff) {
                     intent.putExtra(CONTACT_INFO, "1" + parentID);
@@ -135,10 +126,11 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
         Firebase ref = new Firebase(FIREBASE_URL);
         GregorianCalendar time = new GregorianCalendar();
         final String id = studentID;
-        if (time.get(Calendar.AM_PM) == 1) {
-            final String timeOfDay = "afternoon";
+        if (time.get(Calendar.AM_PM) == Calendar.PM) {
+            timeOfDay = "afternoon";
+        } else {
+            timeOfDay = "morning";
         }
-        final String timeOfDay = "morning";
 
         final String timeString =
                 android.text.format.DateFormat.format("yyyy-MM-dd", time).toString();
@@ -152,10 +144,8 @@ public class CustomListAdapter extends BaseAdapter implements ListAdapter {
                     logArrived = (Boolean) dataSnapshot.child(timeString).child(timeOfDay).child(id).getValue();
                 } else {
                     Map<String, Object> amOrPm = new HashMap<String, Object>();
-                    Boolean isArrived = false;
-                    amOrPm.put(id, isArrived);
+                    amOrPm.put(id, false);
                     logRef.child(timeString).child(timeOfDay).updateChildren(amOrPm);
-                    logArrived = false;
                 }
                 checkBox.setChecked(logArrived);
             }

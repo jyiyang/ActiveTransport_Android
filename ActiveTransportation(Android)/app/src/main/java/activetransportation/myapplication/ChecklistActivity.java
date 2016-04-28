@@ -22,12 +22,19 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * An activity that creates the main checklist screen.
+ */
 public class ChecklistActivity extends AppCompatActivity {
 
+    // UI attributes
     private ListView studentListView;
     private CustomListAdapter adapter;
 
+    // Database link
     private static final String FIREBASE_URL = "https://walkingschoolbus.firebaseIO.com";
+
+    // Extra external IDs
     public final static String STUIDS = "ActiveTransport.STUIDS";
     public final static String ROUTEID = "ActiveTransport.ROUTEID";
     public final static String ISSTAFF = "ActiveTransport.ISSTAFF";
@@ -35,11 +42,11 @@ public class ChecklistActivity extends AppCompatActivity {
     public final static String USERID = "ActiveTransport.USERID";
     public final static String OLDEMAIL = "ActiveTransport.OLDEMAIL";
 
+    // Data class attributes
     private ArrayList<Student> studentList;
     private ArrayList<String> stuIDList;
     private Boolean isStaff_;
     private String routeID_;
-    private Object childrenIDs_;
     private String userID_;
     private String userEmail;
     private Boolean logArrived = false;
@@ -47,12 +54,13 @@ public class ChecklistActivity extends AppCompatActivity {
     private String password;
 
 
-    /* Switch activities when click on tabs. */
+    /** Switch to the (current) ChecklistActivity when the user clicks on the corresponding button. */
     public void switchChecklist(View view) {
         Intent intent = new Intent(this, ChecklistActivity.class);
         startActivity(intent);
     }
 
+    /** Switch to the TimeAndLocationActivity when the user clicks on the corresponding button. */
     public void switchTimeAndLoc(View view) {
         Intent intent = new Intent(this, TimeAndLocationActivity.class);
         intent.putExtra(STUIDS, stuIDList);
@@ -63,24 +71,13 @@ public class ChecklistActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /** Switch to the NotifyActivity when the user clicks on the corresponding button. */
     public void switchNotify(View view) {
         Intent intent = new Intent(this, NotifyActivity.class);
         intent.putExtra(ROUTEID, routeID_);
         intent.putExtra(STUIDS, stuIDList);
         intent.putExtra(ISSTAFF, isStaff_);
         startActivity(intent);
-    }
-
-    /* Push student objects to Firebase.
-     * Note: This function is not called currently.
-     */
-    public void putStudent(Student student, Firebase studentsRef) {
-        Map<String, Object> stuMap = new HashMap<String, Object>();
-        stuMap.put("name", student.getName());
-        //stuMap.put("isArrived", student.getIsArrived());
-        Firebase stuRef = studentsRef.push();
-        stuRef.setValue(stuMap);
-        student.setID(stuRef.getKey());
     }
 
     /** Called when the activity is first created. */
@@ -90,7 +87,7 @@ public class ChecklistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
 
-        /* Get user email and password from LoginActivity/SettingsActivity*/
+        // Get user email and password from LoginActivity or SettingsActivity
         Intent intent = getIntent();
         if (intent.getStringExtra("from").equals("settings")) {
             userEmail = intent.getStringExtra(SettingsActivity.NEWEMAIL);
@@ -103,7 +100,8 @@ public class ChecklistActivity extends AppCompatActivity {
         Firebase ref = new Firebase(FIREBASE_URL);
         Query userRef = ref.child("users").orderByChild("email").equalTo(userEmail);
 
-        /* A listener that retreives user object from Firebase and creates checklist. */
+        // Attach a listener to retrieve the user object that we want from Firebase.
+        // Also create the checklist inside the body of listener.
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -113,21 +111,20 @@ public class ChecklistActivity extends AppCompatActivity {
                     System.out.println(key);
                     Map<String, Object> userMap = (Map<String, Object>) postSnapshot.getValue();
                     isStaff_ = (Boolean) userMap.get("isStaff");
-                    if (isStaff_) {       /* The user is a staff */
+                    if (isStaff_) {       // The user is a staff
                         setContentView(R.layout.activity_checklist);
                         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
                         setSupportActionBar(toolbar);
                         routeID_ = (String) userMap.get("routeID");
-                    } else {              /* The user is a parent */
+                    } else {              // The user is a parent
                         setContentView(R.layout.activity_checklist_parent);
                         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar2);
                         setSupportActionBar(toolbar);
-                        childrenIDs_ = new ArrayList<String>(((Map<String, Object>) userMap.get("childrenIDs")).keySet());
                     }
                     userID_ = key;
                 }
 
-                createList(isStaff_, routeID_, childrenIDs_, userID_);
+                createList(isStaff_, routeID_, userID_);
             }
 
             @Override
@@ -137,18 +134,19 @@ public class ChecklistActivity extends AppCompatActivity {
         });
     }
 
-    /* Creates the checklist when called. */
-    private void createList(Boolean isStaff, Object maybeRouteID, Object maybeChildrenIDs, final String userID) {
+    /** Creates the checklist when called. */
+    private void createList(Boolean isStaff, Object maybeRouteID, final String userID) {
 
         Firebase ref = new Firebase(FIREBASE_URL);
-        if (isStaff) {      /* The user is a staff */
+        if (isStaff) {      // The user is a staff
             String routeID = (String) maybeRouteID;
+            // Attach a listener to retrieve from Firebase the IDs of the students that the staff user is responsible for
             ref.child("routes").child(routeID).child("students").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
                     stuIDList = new ArrayList<String>();
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                        stuIDList.add((String) postSnapshot.getKey());
+                        stuIDList.add(postSnapshot.getKey());
                     }
                     createListHelper();
                 }
@@ -158,15 +156,15 @@ public class ChecklistActivity extends AppCompatActivity {
                     System.out.println("The read failed: " + firebaseError.getMessage());
                 }
             });
-        } else {         /* The user is a parent */
-            ArrayList<String> childrenIDs = (ArrayList<String>) maybeChildrenIDs;
+        } else {         // The user is a parent
+            // Attach a listener to retrive from Firebase the IDs of all children of the parent user
             ref.child("students").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     stuIDList = new ArrayList<String>();
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         if (postSnapshot.child("parentID").getValue().equals(userID)) {
-                            stuIDList.add((String) postSnapshot.getKey());
+                            stuIDList.add(postSnapshot.getKey());
                         }
                     }
                     createListHelper();
@@ -183,14 +181,16 @@ public class ChecklistActivity extends AppCompatActivity {
     private void createListHelper() {
         Firebase ref = new Firebase(FIREBASE_URL);
         Firebase studentsRef = ref.child("students");
+        // Attach a listener to retrieve from Firebase the student objects corresponding to the IDs
+        // that are already stored in the global variable stuIDlist.
         studentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 studentList = new ArrayList<Student>();
-                /* Wrap isStaff information into the student list that will be passed to the custom list adapter */
+                // Wrap isStaff information into the student list that will be passed to the custom list adapter
                 studentList.add(new Student(isStaff_.toString()));
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
-                    /* If the student corresponds to the current user */
+                    // If the student corresponds to the current user
                     if (stuIDList.contains(postSnapshot.getKey())) {
                         Map<String, Object> stuMap = (Map<String, Object>) postSnapshot.getValue();
                         Student student = new Student((String) stuMap.get("name"));
@@ -204,7 +204,7 @@ public class ChecklistActivity extends AppCompatActivity {
                 }
                 adapter = new CustomListAdapter(studentList, ChecklistActivity.this);
 
-                /* Handle listview and assign adapter */
+                // Handle listview and assign adapter
                 studentListView = (ListView) findViewById(R.id.custom_list);
                 studentListView.setAdapter(adapter);
                 studentListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -232,21 +232,20 @@ public class ChecklistActivity extends AppCompatActivity {
             timeOfDay = "morning";
         }
 
-        final String timeString =
-                android.text.format.DateFormat.format("yyyy-MM-dd", time).toString();
+        final String timeString = android.text.format.DateFormat.format("yyyy-MM-dd", time).toString();
         final Firebase logRef = ref.child("logs");
 
+        // Attach a listener to retrieve arrival status of the given student from log from Firebase
         logRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.child(timeString).child(timeOfDay).hasChild(id)) {
-                    /* If the log exists */
+                    // If the log exists
                     logArrived = (Boolean) dataSnapshot.child(timeString).child(timeOfDay).child(id).getValue();
                 } else {
-                    /* If the log does not exist */
+                    // If the log does not exist
                     Map<String, Object> amOrPm = new HashMap<String, Object>();
-                    Boolean isArrived = false;
-                    amOrPm.put(id, isArrived);
+                    amOrPm.put(id, false);
                     logRef.child(timeString).child(timeOfDay).updateChildren(amOrPm);
                 }
             }
@@ -261,7 +260,7 @@ public class ChecklistActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /* Inflate the menu; this adds items to the action bar if it is present. */
+        /** Inflate the menu; this adds items to the action bar if it is present. */
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_checklist, menu);
         return true;
@@ -269,10 +268,7 @@ public class ChecklistActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        /* Handle action bar item clicks here. The action bar will
-         * automatically handle clicks on the Home/Up button, so long
-         * as you specify a parent activity in AndroidManifest.xml.
-         */
+        /** Handle action bar item clicks here. */
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {

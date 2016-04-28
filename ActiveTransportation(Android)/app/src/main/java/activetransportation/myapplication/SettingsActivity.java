@@ -1,16 +1,13 @@
 package activetransportation.myapplication;
 
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,7 +19,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 
 /**
- * Created by Yiqing Cai on 4/15/2016.
+ *  An activity that creates the settings screen.
  */
 public class SettingsActivity extends AppCompatActivity {
 
@@ -62,7 +59,7 @@ public class SettingsActivity extends AppCompatActivity {
         mLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                logout(oldEmail,oldPassword, false);
+                logout();
             }
         });
         mPhoneView.setOnClickListener(new View.OnClickListener() {
@@ -98,7 +95,7 @@ public class SettingsActivity extends AppCompatActivity {
         Firebase ref = new Firebase(FIREBASE_URL);
         String uid = intent.getStringExtra(ChecklistActivity.USERID);
         final Firebase userRef = ref.child("users").child(uid);
-        // get prompts.xml view
+        // Get prompts.xml view
         LayoutInflater li = LayoutInflater.from(context);
         View promptsView = li.inflate(R.layout.settings_changephone, null);
 
@@ -106,10 +103,10 @@ public class SettingsActivity extends AppCompatActivity {
         mPhoneInput.setError(null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 context);
-        // set prompts.xml to alertdialog builder
+        // Set prompts.xml to alertdialog builder
         alertDialogBuilder.setView(promptsView);
 
-        // set dialog message
+        // Set dialog message
         alertDialogBuilder
                 .setCancelable(false)
                 .setPositiveButton("OK",
@@ -126,10 +123,10 @@ public class SettingsActivity extends AppCompatActivity {
                             }
                         });
 
-        // create alert dialog
+        // Create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
 
-        // show it
+        // Show it
         alertDialog.show();
         doKeepDialog(alertDialog);
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -153,7 +150,6 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 if (wantToCloseDialog)
                     alertDialog.dismiss();
-                //else dialog stays open. Make sure you have an obvious way to close the dialog especially if you set cancellable to false.
             }
         });
     }
@@ -167,7 +163,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         final Firebase userRef = ref.child("users").child(uid);
 
-        // get prompts.xml view
+        // Get prompts.xml view
         LayoutInflater li = LayoutInflater.from(context);
         View promptsView = li.inflate(R.layout.settings_changeemail, null);
 
@@ -178,16 +174,16 @@ public class SettingsActivity extends AppCompatActivity {
         mOldPasswordInput.setError(null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 context);
-        // set prompts.xml to alertdialog builder
+        // Set prompts.xml to alertdialog builder
         alertDialogBuilder.setView(promptsView);
 
-        // set dialog message
+        // Set dialog message
         alertDialogBuilder
                 .setCancelable(false)
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
-                                // get user input and set it to result
+                                // Get user input and set it to result
                                 // edit text
                             }
                         })
@@ -198,10 +194,10 @@ public class SettingsActivity extends AppCompatActivity {
                             }
                         });
 
-        // create alert dialog
+        // Create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
 
-        // show it
+        // Show it
         alertDialog.show();
         doKeepDialog(alertDialog);
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -281,12 +277,11 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void changePassword(Intent intent) {
-        String uid = intent.getStringExtra(ChecklistActivity.USERID);
         final Firebase ref = new Firebase(FIREBASE_URL);
         final String oldPassword = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
         final String oldEmail = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
 
-        // get prompts.xml view
+        // Get prompts.xml view
         LayoutInflater li = LayoutInflater.from(context);
         View promptsView = li.inflate(R.layout.settings_changepassword, null);
 
@@ -299,10 +294,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 context);
-        // set prompts.xml to alertdialog builder
+        // Set prompts.xml to alertdialog builder
         alertDialogBuilder.setView(promptsView);
 
-        // set dialog message
+        // Set dialog message
         alertDialogBuilder
                 .setCancelable(false)
                 .setPositiveButton("OK",
@@ -318,10 +313,10 @@ public class SettingsActivity extends AppCompatActivity {
                             }
                         });
 
-        // create alert dialog
+        // Create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
 
-        // show it
+        // Show it
         alertDialog.show();
         doKeepDialog(alertDialog);
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -401,7 +396,7 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     });
                     try {
-                        // Simulate network access.
+                        // Simulate network access
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
 
@@ -410,15 +405,13 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 if (wantToCloseDialog)
                     alertDialog.dismiss();
-                //else dialog stays open. Make sure you have an obvious way to close the dialog especially if you set cancellable to false.
             }
         });
     }
 
-    private void logout(String newEmail, String newPassword, Boolean change) {
+    private void logout() {
         final Firebase ref = new Firebase(FIREBASE_URL);
         ref.unauth();
-
 
         Intent i = getBaseContext().getPackageManager()
                 .getLaunchIntentForPackage( getBaseContext().getPackageName() );
@@ -428,145 +421,10 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-
-//    private void attemptChange(Intent intent) {
-//
-//        String oldPasswordT = intent.getStringExtra(ChecklistActivity.OLDPASSWORD);
-//        final String oldEmail = intent.getStringExtra(ChecklistActivity.OLDEMAIL);
-//        String phone = mPhoneView.getText().toString();
-//        final String email = mEmailView.getText().toString();
-//        String password = mPasswordView.getText().toString();
-//        String rePassword = mRePasswordView.getText().toString();
-//
-//        boolean cancel = false;
-//        View focusView = null;
-//        boolean changePassword = false;
-//        boolean changePhone = false;
-//        boolean changeEmail = false;
-//
-//        Firebase ref = new Firebase(FIREBASE_URL);
-//
-//        String uid = intent.getStringExtra(ChecklistActivity.USERID);
-//        final Firebase userRef = ref.child("users").child(uid);
-//
-//        if (!TextUtils.isEmpty(phone)) {
-//            if(!android.util.Patterns.PHONE.matcher(phone).matches()) {
-//                mPhoneView.setError("Please input a valid phone number");
-//                focusView = mPhoneView;
-//                cancel = true;
-//            } else {
-//                changePhone = true;
-//            }
-//        }
-//
-//        if (!TextUtils.isEmpty(email)) {
-//            if (!isEmailValid(email)) {
-//                mEmailView.setError(getString(R.string.error_invalid_email));
-//                focusView = mEmailView;
-//                cancel = true;
-//            } else {
-//                changeEmail = true;
-//            }
-//        }
-//
-//        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-//            mPasswordView.setError(getString(R.string.error_invalid_password));
-//            focusView = mPasswordView;
-//            cancel = true;
-//        }
-//
-//
-//        if (!TextUtils.isEmpty(password) && !password.equals(rePassword)) {
-//            mRePasswordView.setError("Please make sure the passwords match");
-//            focusView = mRePasswordView;
-//            cancel = true;
-//        }
-//
-//        if (cancel) {
-//            focusView.requestFocus();
-//        } else {
-//            if (changePhone) {
-//                userRef.child("contactInfo").setValue(phone);
-//            }
-//
-//            if (changeEmail) {
-//                ref.changeEmail(oldEmail, oldPasswordT, email, new Firebase.ResultHandler() {
-//                    @Override
-//                    public void onSuccess() {
-//                        userRef.child("email").setValue(email);
-//                        Context context = getApplicationContext();
-//                        CharSequence text = "Successfully changed email";
-//                        int duration = Toast.LENGTH_SHORT;
-//
-//                        Toast toast = Toast.makeText(context, text, duration);
-//                        toast.show();
-//                    }
-//
-//                    @Override
-//                    public void onError(FirebaseError firebaseError) {
-//                        Context context = getApplicationContext();
-//                        CharSequence text = "Email change failed: " + firebaseError;
-//                        int duration = Toast.LENGTH_SHORT;
-//
-//                        Toast toast = Toast.makeText(context, text, duration);
-//                        toast.show();
-//                    }
-//                });
-//                try {
-//                    // Simulate network access.
-//                    Thread.sleep(2000);
-//                } catch (InterruptedException e) {
-//
-//                }
-//
-//            }
-//            if (changePassword) {
-//                ref.changePassword(oldEmail, oldPasswordT, password, new Firebase.ResultHandler() {
-//                    @Override
-//                    public void onSuccess() {
-//                        Context context = getApplicationContext();
-//                        CharSequence text = "Successfully changed password";
-//                        int duration = Toast.LENGTH_SHORT;
-//
-//                        Toast toast = Toast.makeText(context, text, duration);
-//                        toast.show();
-//
-//                    }
-//                    @Override
-//                    public void onError(FirebaseError firebaseError) {
-//                        Context context = getApplicationContext();
-//                        CharSequence text = "Password change failed: " + firebaseError;
-//                        int duration = Toast.LENGTH_SHORT;
-//
-//                        Toast toast = Toast.makeText(context, text, duration);
-//                        toast.show();
-//                    }
-//                });
-//                try {
-//                    // Simulate network access.
-//                    Thread.sleep(2000);
-//                } catch (InterruptedException e) {
-//
-//                }
-//            }
-//            Context context = getApplicationContext();
-//            CharSequence text = "Changes saved";
-//            int duration = Toast.LENGTH_SHORT;
-//
-//            Toast toast = Toast.makeText(context, text, duration);
-//            toast.show();
-//
-//            Intent ChecklistIntent = new Intent(this, ChecklistActivity.class);
-//            startActivity(ChecklistIntent);
-//        }
-//
-//    }
-
     @Override
     public void onBackPressed()
     {
         Intent intent = new Intent(this, ChecklistActivity.class);
-        // code here to show dialog
 
         intent.putExtra("from", "settings");
         intent.putExtra(NEWEMAIL,newEmail);
@@ -576,12 +434,10 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
         return email.contains("@") && email.contains(".");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() >= 0;
     }
 }
