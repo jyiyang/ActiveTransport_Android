@@ -3,6 +3,7 @@ package activetransportation.myapplication;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
@@ -43,6 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     // Data class attributes
     private String id;
+    private Boolean registerSuccess = false;
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -156,7 +159,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if (!mIsStaff.isChecked() && !mIsParent.isChecked()) {
-            mIsStaff.setError("Please specifie if you are a staff or a parent");
+            mIsStaff.setError("Please specify if you are a staff or a parent");
             focusView = mIsParent;
             cancel = true;
         }
@@ -186,7 +189,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() >= 0;
+        return password.length() >= 6;
     }
 
     private boolean isEmailValid(String email) {
@@ -284,11 +287,22 @@ public class RegisterActivity extends AppCompatActivity {
                     User newUser = createUser(id, mFirstName, mLastName, mEmail, mPhone, mIsStaff);
                     Firebase usersRef = ref.child("users");
                     putUser(newUser, usersRef);
+
+                    finish();
+                    Intent myIntent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    RegisterActivity.this.startActivity(myIntent);
                 }
 
                 @Override
                 public void onError(FirebaseError firebaseError) {
                     System.out.println(firebaseError);
+                    registerSuccess = false;
+                    Context context = getApplicationContext();
+                    CharSequence text = "Registration Failed; " + firebaseError.toString();
+                    int duration = Toast.LENGTH_LONG;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
                 }
             });
             return true;
@@ -298,15 +312,6 @@ public class RegisterActivity extends AppCompatActivity {
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
             showProgress(false);
-
-            if (success) {
-                finish();
-                Intent myIntent = new Intent(RegisterActivity.this, LoginActivity.class);
-                RegisterActivity.this.startActivity(myIntent);
-            } else {
-                mPasswordView.setError("Registration Failed");
-                mPasswordView.requestFocus();
-            }
         }
 
         @Override

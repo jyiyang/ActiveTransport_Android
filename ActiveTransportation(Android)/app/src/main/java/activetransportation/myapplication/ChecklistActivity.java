@@ -279,6 +279,10 @@ public class ChecklistActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+        if (id == R.id.action_refresh) {
+            finish();
+            startActivity(getIntent());
+        }
 
         return super.onOptionsItemSelected(item);
     }

@@ -274,7 +274,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 @Override
                 public void onSuccess() {
                     Context context = getApplicationContext();
-                    CharSequence text = "Sending password changing email successful";
+                    CharSequence text = "Password changing email has been successfully sent!";
                     int duration = Toast.LENGTH_SHORT;
 
                     Toast toast = Toast.makeText(context, text, duration);

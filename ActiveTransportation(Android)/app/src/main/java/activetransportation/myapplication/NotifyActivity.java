@@ -53,6 +53,9 @@ public class NotifyActivity extends AppCompatActivity {
     // Use a hashmap to store whether a student is present;
     private final Map<String, String> stuNameMap = new HashMap<String, String>();
 
+    private BroadcastReceiver sendBroadcastReceiver;
+    private BroadcastReceiver deliveryBroadcastReceiver;
+
 
     /** Switch to the ChecklistActivity when the user clicks on the corresponding button. */
     public void switchChecklist(View view) {
@@ -100,6 +103,51 @@ public class NotifyActivity extends AppCompatActivity {
         else {
             timeOfDay = "morning";
         }
+
+        // Register the message receiver to inquire sms sending and delivering status
+        sendBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                // For different message sending status code
+                switch (getResultCode()) {
+                    case Activity.RESULT_OK:
+                        Toast.makeText(getBaseContext(), "Message has been sent!", Toast.LENGTH_LONG).show();
+                        break;
+                    case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
+                        Toast.makeText(getBaseContext(), "Fail to send text: Generic failure. Please check your mobile connection.", Toast.LENGTH_LONG).show();
+                        break;
+                    case SmsManager.RESULT_ERROR_NO_SERVICE:
+                        Toast.makeText(getBaseContext(), "Fail to send text: No service. Please contact your service carrier.", Toast.LENGTH_LONG).show();
+                        break;
+                    case SmsManager.RESULT_ERROR_RADIO_OFF:
+                        Toast.makeText(getBaseContext(), "Fail to send text: Radio off. Please check your mobile connection. ", Toast.LENGTH_LONG).show();
+                        break;
+                }
+            }
+        };
+
+        deliveryBroadcastReceiver = new BroadcastReceiver(){
+            @Override
+            public void onReceive(Context arg0, Intent arg1) {
+                // For different message delivering status code
+                switch (getResultCode()) {
+                    case Activity.RESULT_OK:
+                        Toast.makeText(getBaseContext(), "Message has been delivered",
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        Toast.makeText(getBaseContext(), "SMS did not successfully deliver",
+                                Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        };
+
+        registerReceiver(sendBroadcastReceiver, new IntentFilter("SENT"));
+        registerReceiver(deliveryBroadcastReceiver, new IntentFilter("DELIVERED"));
+
+
+
 
         // Obtain time string
         final String timeString =
@@ -245,60 +293,32 @@ public class NotifyActivity extends AppCompatActivity {
     public void textMsg(String phoneNum, String message, String stuName) {
         try {
             // Make toast msg to inform the user
-            final String notifyMsg = "SMS sent to " + stuName + "'s parent";
-            final String deliverMsg = "SMS to" + stuName + "'s parent is delivered";
+            final String notifyMsg = "SMS is sending to " + stuName + "'s parent";
 
             // Initialize two pending intents for message delivery status
             PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent("SENT"), 0);
             PendingIntent deliverPI = PendingIntent.getBroadcast(this, 0, new Intent("DELIVERED"), 0);
 
-            registerReceiver(new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    // For different message sending status code
-                    switch (getResultCode()) {
-                        case Activity.RESULT_OK:
-                            Toast.makeText(getBaseContext(), notifyMsg, Toast.LENGTH_LONG).show();
-                            break;
-                        case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                            Toast.makeText(getBaseContext(), "Fail to send text: Generic failure. Please check your mobile connection.", Toast.LENGTH_LONG).show();
-                            break;
-                        case SmsManager.RESULT_ERROR_NO_SERVICE:
-                            Toast.makeText(getBaseContext(), "Fail to send text: No service. Please contact your service carrier.", Toast.LENGTH_LONG).show();
-                            break;
-                        case SmsManager.RESULT_ERROR_RADIO_OFF:
-                            Toast.makeText(getBaseContext(), "Fail to send text: Radio off. Please check your mobile connection. ", Toast.LENGTH_LONG).show();
-                            break;
-                    }
-                }
-            }, new IntentFilter("SENT"));
-
-
-            registerReceiver(new BroadcastReceiver(){
-                @Override
-                public void onReceive(Context arg0, Intent arg1) {
-                    // For different message delivering status code
-                    switch (getResultCode()) {
-                        case Activity.RESULT_OK:
-                            Toast.makeText(getBaseContext(), deliverMsg,
-                                    Toast.LENGTH_SHORT).show();
-                            break;
-                        case Activity.RESULT_CANCELED:
-                            Toast.makeText(getBaseContext(), "SMS did not successfully deliver",
-                                    Toast.LENGTH_SHORT).show();
-                            break;
-                    }
-                }
-            }, new IntentFilter("DELIVERED"));
-
             // sending messgae through default sms messenger apps
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(phoneNum, null, message, sentPI, deliverPI);
+
+            Toast.makeText(getApplicationContext(), notifyMsg, Toast.LENGTH_LONG).show();
+
         }
 
         catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Please enter your message and try again.", Toast.LENGTH_LONG).show();
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onStop() {
+
+        unregisterReceiver(sendBroadcastReceiver);
+        unregisterReceiver(deliveryBroadcastReceiver);
+        super.onStop();
+
     }
 }
