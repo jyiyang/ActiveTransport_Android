@@ -101,6 +101,7 @@ public class NotifyActivity extends AppCompatActivity {
             timeOfDay = "morning";
         }
 
+        // Obtain time string
         final String timeString =
                 android.text.format.DateFormat.format("yyyy-MM-dd", time).toString();
 
@@ -127,13 +128,6 @@ public class NotifyActivity extends AppCompatActivity {
                             stuNameMap.put(sID, stuName);
                         }
 
-                        System.out.print("Size of the student-parent map is ");
-                        System.out.println(stuParentMap.size());
-                        for (String stu : stuParentMap.keySet()) {
-                            String par = stuParentMap.get(stu);
-                            System.out.println(stu + ": " + par);
-                        }
-
                         // Nested listener for parent's contact info
                         ref.child("users").addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
@@ -141,8 +135,9 @@ public class NotifyActivity extends AppCompatActivity {
                                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                                     String uID = postSnapshot.getKey();
 
+                                    // If find the corresponding parent user
                                     if (uID.equals(stuParentMap.get(sID))) {
-                                        System.out.println("Find the same user, put phone # in");
+                                        // Obtain the user's phone num and put it into parMap
                                         Map<String, Object> parMap = (Map<String, Object>) postSnapshot.getValue();
                                         String phoneNum = (String) parMap.get("contactInfo");
                                         stuContactMap.put(sID, phoneNum);
@@ -188,11 +183,13 @@ public class NotifyActivity extends AppCompatActivity {
         }
     }
 
+    /** A function that text all parents by calling textMsg helper function*/
     public void textAllParents(View view) {
         String message = msg.getText().toString();;
         String phoneNum;
         String stuName;
 
+        // For every student in student contact map
         for (String sID : stuContactMap.keySet()) {
             phoneNum = stuContactMap.get(sID);
             stuName = stuNameMap.get(sID);
@@ -200,12 +197,14 @@ public class NotifyActivity extends AppCompatActivity {
         }
     }
 
+    /** A function that text arrived students' parents by calling textMsg helper function*/
     public void textArrivedParents(View view) {
         String message = msg.getText().toString();
         String phoneNum;
         String stuName;
         boolean textSent = false;
 
+        // For every student in student contact map and also is true in student arrive map
         for (String sID : stuContactMap.keySet()) {
             phoneNum = stuContactMap.get(sID);
             if (stuArriveMap.get(sID)) {
@@ -221,12 +220,14 @@ public class NotifyActivity extends AppCompatActivity {
 
     }
 
+    /** A function that text not arrived students' parents by calling textMsg helper function*/
     public void textNotArrivedParents(View view) {
         String message = msg.getText().toString();
         String phoneNum;
         String stuName;
         boolean textSent = false;
 
+        // For every student in student contact map and is false in student arrive map
         for (String sID : stuContactMap.keySet()) {
             phoneNum = stuContactMap.get(sID);
             if (!stuArriveMap.get(sID)) {
@@ -240,19 +241,21 @@ public class NotifyActivity extends AppCompatActivity {
         }
     }
 
-    // Helper function for texting a user
+    /** A helper function for sending text*/
     public void textMsg(String phoneNum, String message, String stuName) {
         try {
-
+            // Make toast msg to inform the user
             final String notifyMsg = "SMS sent to " + stuName + "'s parent";
             final String deliverMsg = "SMS to" + stuName + "'s parent is delivered";
 
+            // Initialize two pending intents for message delivery status
             PendingIntent sentPI = PendingIntent.getBroadcast(this, 0, new Intent("SENT"), 0);
             PendingIntent deliverPI = PendingIntent.getBroadcast(this, 0, new Intent("DELIVERED"), 0);
 
             registerReceiver(new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
+                    // For different message sending status code
                     switch (getResultCode()) {
                         case Activity.RESULT_OK:
                             Toast.makeText(getBaseContext(), notifyMsg, Toast.LENGTH_LONG).show();
@@ -270,11 +273,12 @@ public class NotifyActivity extends AppCompatActivity {
                 }
             }, new IntentFilter("SENT"));
 
+
             registerReceiver(new BroadcastReceiver(){
                 @Override
                 public void onReceive(Context arg0, Intent arg1) {
-                    switch (getResultCode())
-                    {
+                    // For different message delivering status code
+                    switch (getResultCode()) {
                         case Activity.RESULT_OK:
                             Toast.makeText(getBaseContext(), deliverMsg,
                                     Toast.LENGTH_SHORT).show();
@@ -287,6 +291,7 @@ public class NotifyActivity extends AppCompatActivity {
                 }
             }, new IntentFilter("DELIVERED"));
 
+            // sending messgae through default sms messenger apps
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(phoneNum, null, message, sentPI, deliverPI);
         }

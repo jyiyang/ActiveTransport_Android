@@ -177,7 +177,7 @@ public class ChecklistActivity extends AppCompatActivity {
         }
     }
 
-    /* A helper function for creating the checklist. */
+    /** A helper function for creating the checklist. */
     private void createListHelper() {
         Firebase ref = new Firebase(FIREBASE_URL);
         Firebase studentsRef = ref.child("students");
