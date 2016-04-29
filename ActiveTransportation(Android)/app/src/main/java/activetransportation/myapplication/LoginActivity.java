@@ -70,6 +70,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private String userEmail;
     public Boolean userApproved = false;
 
+    // A local class to hold the results of login process
     private class LoginResults {
         private Boolean authSuccess;
         private FirebaseError loginError;
@@ -118,6 +119,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
+        // Initialize the buttons to login, register, or send reset email
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         Button mRegisterButton = (Button) findViewById(R.id.email_register_button);
         Button mForgetPassword = (Button) findViewById(R.id.forget_password);
@@ -264,7 +266,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             cancel = true;
         }
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
+            // There was an error; don't attempt sending email
             // form field with an error
             focusView.requestFocus();
         } else {
@@ -444,6 +446,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             Query userRef = ref.child("users").orderByChild("email").equalTo(userEmail);
 
             if (loginResults.getAuthSuccess()) {
+                // Check if the user has routeID or childrenIDs to make sure the user is already approved and assigned 
+                // a route or a list of children
                 userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot snapshot) {
@@ -455,6 +459,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         }
 
                         if (userApproved) {
+                            // Transit to check list screen and pass in password and email
                             finish();
                             Intent myIntent = new Intent(LoginActivity.this, ChecklistActivity.class);
                             myIntent.putExtra(CHECKLIST, mEmail);
@@ -464,6 +469,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             LoginActivity.this.startActivity(myIntent);
                             finish();
                         } else {
+                            // User not approved, do not show check list
                             Context context = getApplicationContext();
                             CharSequence text = "User is not approved by school admin!";
                             int duration = Toast.LENGTH_LONG;
@@ -479,6 +485,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     }
                 });
             } else {
+                // If the login was unsuccessful, catch some common errors.
                 switch (loginResults.loginError.getCode()) {
                     case FirebaseError.USER_DOES_NOT_EXIST: {
                         mEmailView.setError("User does not exist");
@@ -505,6 +512,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         break;
                     }
                     default: {
+                        // Show default "unknown error" message
                         Context context = getApplicationContext();
                         CharSequence text = loginResults.loginError.toString();
                         int duration = Toast.LENGTH_SHORT;
