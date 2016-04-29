@@ -243,7 +243,7 @@ public class ChecklistActivity extends AppCompatActivity {
                     // If the log exists
                     logArrived = (Boolean) dataSnapshot.child(timeString).child(timeOfDay).child(id).getValue();
                 } else {
-                    // If the log does not exist
+                    // If the log does not exist, create a log with student not arrived
                     Map<String, Object> amOrPm = new HashMap<String, Object>();
                     amOrPm.put(id, false);
                     logRef.child(timeString).child(timeOfDay).updateChildren(amOrPm);
@@ -272,6 +272,7 @@ public class ChecklistActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            // Transit to settings menu
             Intent intent = new Intent(this, SettingsActivity.class);
             intent.putExtra(OLDPASSWORD, password);
             intent.putExtra(OLDEMAIL,userEmail);
@@ -280,6 +281,7 @@ public class ChecklistActivity extends AppCompatActivity {
             finish();
         }
         if (id == R.id.action_refresh) {
+            // Refresh the current activity to update student status
             finish();
             startActivity(getIntent());
         }
