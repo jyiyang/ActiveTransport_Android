@@ -113,6 +113,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         Button mRegisterButton = (Button) findViewById(R.id.email_register_button);
+        Button mForgetPassword = (Button) findViewById(R.id.forget_password);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,6 +124,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View view) {
                 startRegister();
+            }
+        });
+        mForgetPassword.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                forgetPassword();
             }
         });
 
@@ -228,6 +235,54 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
+        }
+    }
+
+    private void forgetPassword() {
+        mEmailView.setError(null);
+        String email = mEmailView.getText().toString();
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid email address
+        if (TextUtils.isEmpty(email)) {
+            mEmailView.setError(getString(R.string.error_field_required));
+            focusView = mEmailView;
+            cancel = true;
+        } else if (!isEmailValid(email)) {
+            mEmailView.setError(getString(R.string.error_invalid_email));
+            focusView = mEmailView;
+            cancel = true;
+        }
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error
+            focusView.requestFocus();
+        } else {
+            // Send change password email to user email address
+            Firebase ref = new Firebase(FIREBASE_URL);
+            ref.resetPassword(email, new Firebase.ResultHandler() {
+                @Override
+                public void onSuccess() {
+                    Context context = getApplicationContext();
+                    CharSequence text = "Sending password changing email successful";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+                @Override
+                public void onError(FirebaseError firebaseError) {
+                    // error encountered
+                    Context context = getApplicationContext();
+                    CharSequence text = "Fail to send Email: "+firebaseError;
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+            });
         }
     }
 
