@@ -31,11 +31,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -62,6 +66,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+
+    private String userEmail;
+    public Boolean userApproved = false;
 
     private class LoginResults {
         private Boolean authSuccess;
@@ -233,6 +240,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt
             showProgress(true);
+            userEmail = email;
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
@@ -407,7 +415,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 public void onAuthenticated(AuthData authData) {
                     System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
                     loginResults.setAuthSuccess(true);
+                    userEmail = mEmail;
                 }
+
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
                     // There was an error
@@ -430,15 +440,44 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mAuthTask = null;
             showProgress(false);
 
-            if (loginResults.getAuthSuccess()) {
-                finish();
-                Intent myIntent = new Intent(LoginActivity.this, ChecklistActivity.class);
-                myIntent.putExtra(CHECKLIST, mEmail);
-                myIntent.putExtra(PASSWORD, mPassword);
-                myIntent.putExtra("from", "login");
+            Firebase ref = new Firebase(FIREBASE_URL);
+            Query userRef = ref.child("users").orderByChild("email").equalTo(userEmail);
 
-                LoginActivity.this.startActivity(myIntent);
-                finish();
+            if (loginResults.getAuthSuccess()) {
+                userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                            Map<String, Object> userMap = (Map<String, Object>) postSnapshot.getValue();
+                            if (userMap.get("routeID") != null || userMap.get("childrenIDs") != null) {
+                                userApproved = true;
+                            }
+                        }
+
+                        if (userApproved) {
+                            finish();
+                            Intent myIntent = new Intent(LoginActivity.this, ChecklistActivity.class);
+                            myIntent.putExtra(CHECKLIST, mEmail);
+                            myIntent.putExtra(PASSWORD, mPassword);
+                            myIntent.putExtra("from", "login");
+
+                            LoginActivity.this.startActivity(myIntent);
+                            finish();
+                        } else {
+                            Context context = getApplicationContext();
+                            CharSequence text = "User is not approved by school admin!";
+                            int duration = Toast.LENGTH_LONG;
+
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+                        System.out.println("The read failed: " + firebaseError.getMessage());
+                    }
+                });
             } else {
                 switch (loginResults.loginError.getCode()) {
                     case FirebaseError.USER_DOES_NOT_EXIST: {
@@ -456,7 +495,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         mEmailView.requestFocus();
                         break;
                     }
-                    case FirebaseError.NETWORK_ERROR:{
+                    case FirebaseError.NETWORK_ERROR: {
                         Context context = getApplicationContext();
                         CharSequence text = "Network error, try again later";
                         int duration = Toast.LENGTH_SHORT;
