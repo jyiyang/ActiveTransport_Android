@@ -20,6 +20,7 @@ import com.firebase.client.FirebaseError;
 
 /**
  *  An activity that creates the settings screen.
+ *  Users can change their phone numbers, passwords, or emails using their old passwords
  */
 public class SettingsActivity extends AppCompatActivity {
 
@@ -59,9 +60,11 @@ public class SettingsActivity extends AppCompatActivity {
         mLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Log out the user
                 logout();
             }
         });
+        // Change phone number, email, or password by popin a new dialog
         mPhoneView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,8 +115,7 @@ public class SettingsActivity extends AppCompatActivity {
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
-                                // get user input and set it to result
-                                // edit text
+                               // do nothing
                             }
                         })
                 .setNegativeButton("Cancel",
@@ -126,7 +128,7 @@ public class SettingsActivity extends AppCompatActivity {
         // Create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
 
-        // Show it
+        // Show the dialog
         alertDialog.show();
         doKeepDialog(alertDialog);
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -134,7 +136,7 @@ public class SettingsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Boolean wantToCloseDialog = false;
                 String phone = mPhoneInput.getText().toString();
-
+                // Phone number input sanity checks.
                 if (TextUtils.isEmpty(phone)) {
                     mPhoneInput.setError(getString(R.string.error_field_required));
                     mPhoneInput.requestFocus();
@@ -180,8 +182,7 @@ public class SettingsActivity extends AppCompatActivity {
                 .setPositiveButton("OK",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,int id) {
-                                // Get user input and set it to result
-                                // edit text
+                                // do nothing
                             }
                         })
                 .setNegativeButton("Cancel",
@@ -194,7 +195,7 @@ public class SettingsActivity extends AppCompatActivity {
         // Create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
 
-        // Show it
+        // Show the dialog
         alertDialog.show();
         doKeepDialog(alertDialog);
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -204,7 +205,7 @@ public class SettingsActivity extends AppCompatActivity {
                 final String oldPasswordIn = mOldPasswordInput.getText().toString();
                 final String email = mEmailInput.getText().toString();
                 Boolean cancel = false;
-
+                // Password and email input sanity checks.
                 if (TextUtils.isEmpty(oldPasswordIn)) {
                     mOldPasswordInput.setError(getString(R.string.error_field_required));
                     mOldPasswordInput.requestFocus();
@@ -235,6 +236,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
 
                 if(!cancel) {
+                    // Call Firebase function to change the email 
                     ref.changeEmail(Email, oldPasswordIn, email, new Firebase.ResultHandler() {
                         @Override
                         public void onSuccess() {
@@ -259,7 +261,7 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     });
                     try {
-                        // Simulate network access.
+                        // Sleep to ensure the change email function finishes
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
 
@@ -268,7 +270,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
                 if (wantToCloseDialog)
                     alertDialog.dismiss();
-                //else dialog stays open. Make sure you have an obvious way to close the dialog especially if you set cancellable to false.
+                //else dialog stays open.
             }
         });
     }
@@ -311,7 +313,7 @@ public class SettingsActivity extends AppCompatActivity {
         // Create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
 
-        // Show it
+        // Show the dialog
         alertDialog.show();
         doKeepDialog(alertDialog);
         alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
@@ -323,6 +325,7 @@ public class SettingsActivity extends AppCompatActivity {
                 final String rePassword = mRePasswordInput.getText().toString();
                 Boolean cancel = false;
 
+                // Old password and new message input sanity checks.
                 if (TextUtils.isEmpty(oldPasswordIn)) {
                     mOldPasswordInput.setError(getString(R.string.error_field_required));
                     mOldPasswordInput.requestFocus();
@@ -367,6 +370,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 
                 if(!cancel) {
+                    // Call the firebase funcions to change the user password using email and oldpassword
                     ref.changePassword(Email, oldPasswordIn, password, new Firebase.ResultHandler() {
                         @Override
                         public void onSuccess() {
@@ -391,7 +395,7 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     });
                     try {
-                        // Simulate network access
+                        // Sleep to ensure the firebase function finishes
                         Thread.sleep(2000);
                     } catch (InterruptedException e) {
 
@@ -404,6 +408,7 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
+    // Log out the user and return to login activity
     private void logout() {
         final Firebase ref = new Firebase(FIREBASE_URL);
         ref.unauth();
@@ -416,11 +421,12 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    // Return to check list activity if the back button is pressed
     @Override
     public void onBackPressed()
     {
         Intent intent = new Intent(this, ChecklistActivity.class);
-
+        // Pass in the new password and new email in case they are changed
         intent.putExtra("from", "settings");
         intent.putExtra(NEWEMAIL,Email);
         intent.putExtra(NEWPASSWORD,Password);
@@ -429,10 +435,12 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private boolean isEmailValid(String email) {
+        // Naive email validation, firebase does it
         return email.contains("@") && email.contains(".");
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() >= 0;
+        // Naive password validation
+        return password.length() >= 6;
     }
 }
