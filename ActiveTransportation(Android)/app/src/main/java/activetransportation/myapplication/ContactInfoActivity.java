@@ -16,7 +16,9 @@ import com.firebase.client.ValueEventListener;
 import java.util.ArrayList;
 
 /**
- * An activity that creates the contact info screen.
+ * An activity that creates the contact info screen for both parent and staff users.
+ * For staff, it will display the contact info of the specific student.
+ * For parent, it will display the contact info of the child's route staff.
  */
 public class ContactInfoActivity extends AppCompatActivity {
 
@@ -25,12 +27,13 @@ public class ContactInfoActivity extends AppCompatActivity {
     private TextView userView;
     private ListView contactView;
 
+    // Initialize fields that contain user's information
     private String userName;
     private String userContactInfo;
     private String userEmail;
     private String staffID;
     private Boolean isStaff;
-
+    // List view adapter
     private ContactInfoListAdapter adapter;
 
     /** Return to the ChecklistActivity. */
@@ -47,6 +50,7 @@ public class ContactInfoActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Firebase ref = new Firebase(FIREBASE_URL);
 
+        // Get activity intents
         Intent intent = getIntent();
         String someID = intent.getStringExtra(CustomListAdapter.CONTACT_INFO);
         if (someID.charAt(0) == '1') {
@@ -57,10 +61,12 @@ public class ContactInfoActivity extends AppCompatActivity {
         someID = someID.substring(1);
 
         if (isStaff) {
+            // Calling createView if the user is staff
             createView(someID);
         } else {
+            // If the user is a parent
             Firebase routeRef = ref.child("routes").child(someID);
-
+            // Initialize a listener for child ID project
             routeRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
@@ -72,6 +78,7 @@ public class ContactInfoActivity extends AppCompatActivity {
                             break;
                         }
                     }
+                    // Again, calling createView() by passing staffID
                     createView(staffID);
                 }
 
@@ -91,7 +98,7 @@ public class ContactInfoActivity extends AppCompatActivity {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-
+                // For every user reference, record the user's info
                 for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                     String key = postSnapshot.getKey();
                     if (key == "name") {
@@ -102,11 +109,11 @@ public class ContactInfoActivity extends AppCompatActivity {
                         userEmail = (String) postSnapshot.getValue();
                     }
                 }
-
+                // Initialize a list of contacts to put into a adpater
                 ArrayList<String> contact = new ArrayList<String>();
                 contact.add(userContactInfo);
                 contact.add(userEmail);
-
+                // Initialize view adapter and views
                 adapter = new ContactInfoListAdapter(contact, ContactInfoActivity.this);
 
                 contactView = (ListView) findViewById(R.id.contact_list);
@@ -115,7 +122,6 @@ public class ContactInfoActivity extends AppCompatActivity {
                 userView = (TextView) findViewById(R.id.parent_name);
                 userView.setText(userName);
             }
-
             @Override
             public void onCancelled(FirebaseError firebaseError) {
                 System.out.println("The read failed: " + firebaseError.getMessage());

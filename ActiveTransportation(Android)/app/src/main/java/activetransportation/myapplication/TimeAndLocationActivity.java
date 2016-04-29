@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *  An activity that creates a time and location screen.
+ *  An activity that creates a time and location screen for both parent and staff users.
+ *  If the user is a parent, it will launch the time and location view for parent.
+ *  Otherwise, it will launch the time and location view for staff
  */
 public class TimeAndLocationActivity extends AppCompatActivity {
 
@@ -39,7 +41,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
     private TextView mTimeDisplay;
     private TextView mLocationDisplay;
 
-    /* Switch activities when the user clicks on buttons */
+    /** Switch between three activities when the user clicks on buttons */
     public void switchChecklist(View view) {
         Intent intent = new Intent(this, ChecklistActivity.class);
         startActivity(intent);
@@ -63,15 +65,18 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(this);
 
+        // Get intents from activities that calls this activity
         Intent intent = getIntent();
         isStaff = intent.getBooleanExtra(ChecklistActivity.ISSTAFF, false);
         routeID_ = intent.getStringExtra(ChecklistActivity.ROUTEID);
         stuIDs = intent.getStringArrayListExtra(ChecklistActivity.STUIDS);
+        // If it is staff, set the contentView to staff XML
         if (isStaff) {
             setContentView(R.layout.activity_time_and_location_staff);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             setStaff(intent);
+        // Otherwise, set the contentView to parent XML
         } else {
             setContentView(R.layout.activity_time_and_location_parent);
             Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -80,6 +85,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         }
     }
 
+    /** This is a function to set the content timeAndLocation activity for a parent user*/
     private void setParent(Intent intent) {
         stuIDs = intent.getStringArrayListExtra(ChecklistActivity.STUIDS);
 
@@ -87,15 +93,16 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final Map<String, ArrayList<String>> stuRouteMap = new HashMap<String, ArrayList<String>>();
-
         final Firebase ref = new Firebase(FIREBASE_URL);
+        // Pulling every child that the parent has from firebase
         for (String stuID : stuIDs) {
             final Query stuRef = ref.child("students").orderByKey().equalTo(stuID);
 
             stuRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot snapshot) {
-
+                    // For every student, build a route-student hashmap that store a route
+                    // the student as coresponding key-value pair 
                     ArrayList<String> temp;
                     for (DataSnapshot postSnapshot : snapshot.getChildren()) {
                         String key = postSnapshot.getKey();
@@ -111,15 +118,16 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                         stuRouteMap.put(routeID, temp);
                     }
 
-
                     System.out.print("Number of routes in stuRouteMap is: ");
                     System.out.println(stuRouteMap.keySet().size());
                     routeSet = new HashSet<Route>();
+                    // Register another listener for route object on firebase
                     ref.child("routes").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
-
                             for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                                // For every route object, find the corresponding route information
+                                // such as route location and route meeting time
                                 Map<String, Object> rMap = (Map<String, Object>) postSnapshot.getValue();
                                 String rID = postSnapshot.getKey();
                                 System.out.println(rID);
@@ -131,6 +139,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                                     routeSet.add(route);
                                 }
                             }
+                            // Since the listener might be called multiple times, use a set to eliminate repetitions
                             if (routeSet.size() == stuRouteMap.keySet().size()) {
                                 routeList = new ArrayList<Route>(routeSet);
                                 System.out.print("Number of routes in routeList is: ");
@@ -138,6 +147,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                                 adapter = new ExpandableTimeLocationListAdapter(routeList, TimeAndLocationActivity.this);
 
                                 // Handle listview and assign adapter
+                                // Initialize the main view
                                 timeandLocListView = (ExpandableListView) findViewById(R.id.time_loc_list);
                                 timeandLocListView.setAdapter(adapter);
                             }
@@ -158,6 +168,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         }
     }
 
+    /** This is a function to set the content timeAndLocation activity for a staff user*/
     private void setStaff(Intent intent) {
         routeID_ = intent.getStringExtra(ChecklistActivity.ROUTEID);
         Firebase ref = new Firebase(FIREBASE_URL);
@@ -165,6 +176,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
         mTimeDisplay = (TextView) findViewById(R.id.meeting_time_staff);
         mLocationDisplay = (TextView) findViewById(R.id.meeting_location_staff);
 
+        // Iniatialize a listener for meeting location for that route
         ref.child("routes").child(routeID_).child("meetingLocation").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -177,7 +189,7 @@ public class TimeAndLocationActivity extends AppCompatActivity {
                 mLocationDisplay.setText("Fail to read default location");
             }
         });
-
+        // Iniatialize a listener for meeting time for that route
         ref.child("routes").child(routeID_).child("meetingTime").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
